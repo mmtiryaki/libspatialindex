@@ -1,0 +1,82 @@
+#! /bin/bash
+
+# utku: Query Modes:  [intersection | 10NN | selfjoin | contains]
+
+export treename=D_${treeprefix}
+export timestatsfile=1
+export aqar=0.1
+./QryExec
+export aqar=0.3
+./QryExec
+export aqar=0.7
+./QryExec
+export aqar=1
+./QryExec
+export aqar=1.4
+./QryExec
+export aqar=3.3
+./QryExec
+export aqar=10
+./QryExec
+
+mv  $timestatsfile $pltdir  
+
+########################################
+
+export treename=S_${treeprefix}_1
+export timestatsfile=2
+
+export aqar=0.1
+./QryExec
+export aqar=0.3
+./QryExec
+export aqar=0.7
+./QryExec
+export aqar=1
+./QryExec
+export aqar=1.4
+./QryExec
+export aqar=3.3
+./QryExec
+export aqar=10
+./QryExec
+
+mv  $timestatsfile $pltdir  
+
+
+########################################
+
+export timestatsfile=3
+
+export aqar=0.1
+export treename=S_${treeprefix}_${aqar}
+./QryExec
+
+export aqar=0.3
+export treename=S_${treeprefix}_${aqar}
+./QryExec
+
+export aqar=0.7
+export treename=S_${treeprefix}_${aqar}
+./QryExec
+
+export aqar=1
+export treename=S_${treeprefix}_${aqar}
+./QryExec
+
+export aqar=1.4
+export treename=S_${treeprefix}_${aqar}
+./QryExec
+
+export aqar=3.3
+export treename=S_${treeprefix}_${aqar}
+./QryExec
+
+export aqar=10
+export treename=S_${treeprefix}_${aqar}
+./QryExec
+
+mv  $timestatsfile $pltdir  
+
+
+

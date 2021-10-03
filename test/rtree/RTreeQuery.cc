@@ -26,7 +26,7 @@
 ******************************************************************************/
 
 // NOTE: Please read README.txt before browsing this code.
-
+#include <chrono>
 #include <cstring>
 
 // include library header file.
@@ -73,7 +73,7 @@ public:
 		//cout << s << endl;
 		delete[] pData;
 
-		cout << d.getIdentifier() << endl;
+		cout << d.getIdentifier()<<endl;
 			// the ID of this data entry is an answer to the query. I will just print it to stdout.
 	}
 
@@ -199,6 +199,8 @@ int main(int argc, char** argv)
 		double x1, x2, y1, y2;
 		double plow[2], phigh[2];
 
+		auto t1 = std::chrono::high_resolution_clock::now(); //utku
+
 		while (fin)
 		{
 			fin >> op >> id >> x1 >> y1 >> x2 >> y2;
@@ -253,6 +255,14 @@ int main(int argc, char** argv)
 		cerr << "Index I/O: " << indexIO << endl;
 		cerr << "Leaf I/O: " << leafIO << endl;
 		cerr << "Buffer hits: " << file->getHits() << endl;
+
+		// utku:
+		auto t2 = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast < std::chrono::milliseconds
+				> (t2 - t1).count();
+		std::cerr << "Time elapsed (msec) for query execution is : " << duration
+				<< std::endl;
+
 
 		delete tree;
 		delete file;

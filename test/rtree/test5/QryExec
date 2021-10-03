@@ -1,0 +1,27 @@
+#! /bin/bash
+
+echo Querying with R*-Tree $treename  with $queryfile_$aqar
+# 2>&1 : combines (or called redirect) standard error (stderr) with standard out (stdout)
+# > r  : redirect output to file r with replacing r.  >> : redirect and append to file r.
+
+# For Disk IO:
+# Use awk '{if ($1 ~ /Reads/) print $2}' < r >> 1 
+# For Latency:
+# Use awk '{if ($1 ~ /Time/) print $9}' < r >> 1 
+
+#echo $treename
+#echo $treename_$aqar    --> bunu begenmedi..:<
+#echo "$treename"_"$aqar"  -->bunu begendi. :>  
+#echo ${treename}_${aqar}    -->bunu da begendi. :>
+echo ${treeprefix}
+time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename intersection 2>r 1>$resultsdir/${treename}_${aqar}      #redirect cerr to 'r' AND redirect cout to results...file
+awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile  
+rm -rf r
+
+
+
+
+
+
+
+
