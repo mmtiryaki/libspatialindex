@@ -4,20 +4,20 @@
 
 echo Generating queryset  #"Usage: ds data_loc_dist qs query_loc_dist d_dx d_dy d_dist q_dx q_dy q_dist" 
 
-mkdir -p  ../../debug/query  # -p flag: mk dir only if dir does not exist.
-export querydir=../../debug/query
+mkdir -p  ~/eclipse-workspace/test-build/query  # -p flag: mk dir only if dir does not exist.
+export querydir=~/eclipse-workspace/test-build/query
 
 export qpostfix=${qs}_${query_loc_dist}_${qx}_${qy}
 export queryfile=${querydir}/query${qpostfix}
 
-export bindir=../../debug
-export dbdir=../../debug/database/${ds}
+export bindir=~/eclipse-workspace/test-build/
+export dbdir=~/eclipse-workspace/test-build/database/${ds}
 
-mkdir -p plt   # -p flag: mk dir only if dir does not exist.
-export pltdir=../../debug/plt
+mkdir -p ~/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir does not exist.
+export pltdir=~/eclipse-workspace/test-build/plt
 
-mkdir -p ../../debug/results
-export resultsdir=../../debug/results
+mkdir -p ~/eclipse-workspace/test-build/results
+export resultsdir=~/eclipse-workspace/test-build/results
 
 
 #time ../../test-rtree-Generator $ds $data_loc_dist $qs $query_loc_dist $dx $dy $d_dist $qx $qy $q_dist > d

@@ -8,6 +8,7 @@ sort -n $resultsdir/S_${treeprefix}_0.3_0.3 > c  # Adaptive STR
 if diff a b
 then
 echo "Same results with exhaustive search. Everything seems fine."
+paste ./0 $pltdir/1 $pltdir/2 $pltdir/3 > $pltdir/RES
 echo Results: `wc -l a`
 rm -rf b 
 else

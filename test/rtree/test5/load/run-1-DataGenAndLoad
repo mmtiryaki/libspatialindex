@@ -3,7 +3,7 @@
 # NOTE:(UK) This file generates data set and load it into R*tree and STR-tree. 
 # In case you wish to generate only data set and display it with gnuplot, then comment loading commands at the last 2 line.
 
-export ds=30000
+export ds=10000
 export data_loc_dist=u  # data location distribution: uniform or gaussian, u or g
 
 #export dx=0.01

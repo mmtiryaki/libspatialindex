@@ -5,19 +5,19 @@
 
 echo Generating dataset  #"Usage: ds data_loc_dist qs query_loc_dist d_dx d_dy d_dist q_dx q_dy q_dist" 
 
-mkdir -p  ../../debug/data  # -p flag: mk dir only if dir does not exist.
-export datadir=../../debug/data
+mkdir -p  ~/eclipse-workspace/test-build/data  # -p flag: mk dir only if dir does not exist.
+export datadir=~/eclipse-workspace/test-build/data 
 export dpostfix=${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}
 
 export datafile=${datadir}/data${dpostfix}
 
-mkdir -p ../../debug/plt   # -p flag: mk dir only if dir does not exist.
-export pltdir=../../debug/plt
+mkdir -p ~/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir does not exist.
+export pltdir=~/eclipse-workspace/test-build/plt
 
-export bindir=../../debug
+export bindir=~/eclipse-workspace/test-build/
 
-mkdir -p ../../debug/database/${ds}    # -p flag: mk dir only if dir does not exist.
-export dbdir=../../debug/database/${ds}
+mkdir -p ~/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
+export dbdir=~/eclipse-workspace/test-build/database/${ds}
 
 time ${bindir}/test-rtree-Generator $ds $data_loc_dist 0 u $dx $dy $d_dist 0.1 0.1 f > d   # 0 u ... 0.1 0.1 f : dummy values..
 

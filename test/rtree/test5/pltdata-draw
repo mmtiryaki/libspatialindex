@@ -1,0 +1,14 @@
+set title "Data Set in Unit Area"
+set xlabel "x"
+set ylabel "y"
+unset logscale x
+unset logscale y
+set xrange[0:1.2]
+set yrange[0:1.2]
+set style line 1 lc rgb 'black' pt 7 pointsize 0.3   # unset style line 1
+
+plot "~/eclipse-workspace/test-build/plt/pltdata" using 1:2 w p title "point" ls 1  #-->> POINT data set
+
+#plot "pltdata" using 1:2 w l title "region" ls 2  #-->> REGION data set  
+
+# Run this file with gnuplot>load "pltdata-draw"

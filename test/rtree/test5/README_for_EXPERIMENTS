@@ -1,78 +1,90 @@
-1-) We generate dataset & Load Dyn and STR with "run-GenerateDataAndLoadDyn-STR"
+1-) We generate dataset & Load Dyn and STR with "run-1-DataGenAndLoad"
         ----> Parameters here: 
   		  ds, data_loc_dist, 
   		  dx, dy, d_dist, (extent of data regions and extent distr.)
   		  pS,bP for ext. sorting
         ----> At the end of this part, we will have:
-          in "PLT" directory: pltdata, pltDynLevel0, pltSTRLevel0_01, ....pltSTRLevel0_10 
-          in "ds" directory (f.e. ds:10000) : [ D_tree10000_u_0_0_f_92.dat, ....idx, ...Loading-Stats ]  and same for all other 7 STR trees (one is normal STR, the other 6 is AdpSTR)
-       	  in "testdata" directory data10000_u_0_0_f  is our data file.	
+          in "/data" dir: like data10000_u_0_0_f
+          in "/database/ds" directory (f.e. ds:10000) : [ D_tree10000_u_0_0_f_92.dat, ....idx, ...Loading-Stats ]  and same for all other 7 STR trees (one is normal STR, the other 6 is AdpSTR)
+          in "/plt" directory: pltdata, pltDynLevel0, pltSTRLevel0_0.1, ....pltSTRLevel0_10 
   		
-2-) We generate "querysets" & "run it on Dyn and STR and AdpSTR" in "run-GenerateQueriesAndExecOnDyn-STR".
+2-) We generate "querysets" & "run it on Dyn and STR and AdpSTR" in "run-2-QueryGenAndExec".
 		----> Parameters here: 
           qs, query_loc_dist
 		  qx,qy  ( extent, always fix. Because we already modify AQAR in the code)
 		
 		----> At the end of this part, we will have:
 		  # Codes of Query Ave. Aspect Ratio (AQAR). 01,07,03,1,14,33,10
-		  run-GenerateQueries       --> in "testdata" directory:We will have 7 querysets like "query100_u_0.5_0.5_01" "query100_u_0.5_0.5_03" ..."query100_u_0.5_0.5_1" .."query100_u_0.5_0.5_10"
-		  								in "PLT" directory:  pltquery01, ...pltquery10 
+		  run-QueryGen       --> in "query" directory:We will have 7 querysets like "query100_u_0.5_0.5_0.1" "query100_u_0.5_0.5_0.3" ..."query100_u_0.5_0.5_1" .."query100_u_0.5_0.5_10"
+		  					     in "plt" directory:  pltquery0.1, ...pltquery10 
 		                                 
-		  run-Queries-DynAndSTRTree --> in "PLT" directory: We will have 3 files named as "1,2,3"  ( file 0 is always there!)
+		  run-QueryExecOnTrees --> in "plt" directory: We will have 3 files named as "1,2,3"  ( file 0 is always there!)
 									     1 has R*tree results for all 7 query sets.
 									     2 has STR-tree results for all 7 query sets.
 									     3 has AdpSTR-tree results for all 7 query sets.
-									 --> in "results" directory we will have 3 files: resultsAdpSTR_1, resultsDyn_1, resultsSTR_1
+									 --> in "results" directory we will have "7 files for each Dyn-tree, STR-tree" 
+									      and 6 output results fies for Adp-STR. ( ...0.1_0.1, 0.3_0.3, 0.7_0.7, 1.4_1.4, 3.3_3.3, 10_10 (1_1 yok cunku bu zaten ordinary STR)
 									   
-		  run-compare-results       --> Compare all result sets in results directory for 3 trees only for "query....._1"
+		  run-compare-results       --> Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
 		  
-3-) Now, combine the results into "RES...." file in "PLT" directory with 
-				plt$ paste 0 1 2 3 > "RES...."
-				# do not leave testdata !
-				testdata$ paste ./plt/0 ./plt/1 ./plt/2 ./plt/3 > ./plt/RES  
+3-) If e/t seems fine, then results are combined into "RES...." file in "plt" directory with 
+				paste 0 1 2 3 > "RES...."
+   command in "run-compare-results" script. 
+				
 				--> in "PLT" directory: We will have FINAL perf. results in 4-column in RES file.
 
 # PLOTTING EXAMPLES: 
+-------------------------
+Run "gnuplot" in the /test5 directory
 
-1-) first Part: Generate data set and Load trees. you may plot data & query & Leaf MBRs with the following command:
-#gnuplot> set title "Data Set in Unit Area"
-#gnuplot> set xlabel "x"
-#gnuplot> set ylabel "y"
-#gnuplot> set xrange[0:1.2]
-#gnuplot> set yrange[0:1.2]
-# gnuplot> set style line 1 lc rgb 'black' pt 7 pointsize 0.3   # unset style line 1
-# gnuplot> plot "pltdata" using 1:2 w p title "point" ls 1  -->> POINT data set
+1-) first Part: Generate data set and Load trees. you may plot data & query & Leaf MBRs with the following #gnuplot> specifications:
+The following settings are stored in "plt...-draw" files.
+[pltdata-draw]
+set title "Data Set in Unit Area"
+set xlabel "x"
+set ylabel "y"
+set xrange[0:1.2]
+set yrange[0:1.2]
+set style line 1 lc rgb 'black' pt 7 pointsize 0.3   # unset style line 1
+plot "pltdata" using 1:2 w p title "point" ls 1  #-->> POINT data set
+plot "pltdata" using 1:2 w l title "region" ls 2  -->> REGION data set   
 
-# gnuplot> set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
-# gnuplot> plot "pltdata" using 1:2 w l title "region" ls 2  -->> REGION data set     
-# gnuplot> plot "pltDynLevel0" using 1:2 w l  title "Leaf-MBR" ls 2
-# gnuplot> plot "pltSTRLevel0_1" using 1:2 w l  title "Leaf-MBR" ls 2
+[pltDynLevel0-draw, pltSTRLevel0_*-draw]
+set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
+plot "pltDynLevel0" using 1:2 w l  title "Leaf-MBR" ls 2
+plot "pltSTRLevel0_1" using 1:2 w l  title "Leaf-MBR" ls 2
 
-2-) At the end of part-2: You may plot query sets each of which has different AQAR(01,07,03,1,14,33,10) and Query Exec Perf. Results in "RES" file
-# gnuplot> plot "pltquery01" using 1:2 w l, "pltquery10" using 1:2 w l lw 1
+2-) At the end of part-2: You may plot query sets each of which has different AQAR(01,07,03,1,14,33,10)
+[pltquery-draw] 
+plot "pltquery01" using 1:2 w l, "pltquery10" using 1:2 w l lw 1
 
-3-) At the end of part-3:
-#gnuplot> set title "The Index's Sensitivity to Workload Ave. Aspect Ratio (DS=10K, Query Area=16e-4)"
-#gnuplot> set title "Query Exec. Latency's Sensitivity to AQAR (DS=10K, Query Area=16e-4)"
-#gnuplot> set xlabel "AQAR"
-#gnuplot> set ylabel "Number Of Nodes Read"
-#gnuplot> set xrange[0.1:10]
-#gnuplot> set logscale x 2                    # veriye göre 10, 2, 4 gibi oynamalar yaparak güzel şekil oluşturabilirsin..
-# gnuplot> plot "RES" using 1:2 w lp title "R*tree", "RES" using 1:3 w lp title "STR-tree", "RES" using 1:4 w lp title "AdpSTR-tree"
+3-) At the end of part-3: (and Query Exec Perf. Results in "RES" file)
+[pltIdxSensToAQAR-draw]
+set title "Query Exec. Latency's Sensitivity to AQAR (DS=10K, Query Area=16e-4)"
+set xlabel "AQAR"
+set ylabel "Latency"
+set xrange[0.1:10]
+set yrange[10:100]
+set logscale x 2                    # veriye göre 10, 2, 4 gibi oynamalar yaparak güzel şekil oluşturabilirsin..
+plot "...RES" using 1:2 w lp title "R*tree", "...RES" using 1:3 w lp title "STR-tree", "...RES" using 1:4 w lp title "AdpSTR-tree"
+
 
 4-) Plot DS vs Query Eff. with fix "AQAR=01" and "Area=81e-4"
-#gnuplot> set title "Query Efficiency vs Data Set size (AQAR=0.1, Query Area=81e-4)"
-#gnuplot> set xlabel "Data Set Size"
-#gnuplot> set ylabel "Number Of Nodes Read"
-#gnuplot> set logscale x 10                    # veriye göre 10, 2, 4 gibi oynamalar yaparak güzel şekil oluşturabilirsin..
-# gnuplot> plot "RES_AQAR01_Area81" using 1:2 w lp title "R*tree", "RES_AQAR01_Area81" using 1:3 w lp title "STR-tree", "RES_AQAR01_Area81" using 1:4 w lp title "AdpSTR-tree"
+set title "Query Efficiency vs Data Set size (AQAR=0.1, Query Area=81e-4)"
+set xlabel "Data Set Size"
+set ylabel "Number Of Nodes Read"
+set logscale x 10                    # veriye göre 10, 2, 4 gibi oynamalar yaparak güzel şekil oluşturabilirsin..
+plot "RES_AQAR01_Area81" using 1:2 w lp title "R*tree", "RES_AQAR01_Area81" using 1:3 w lp title "STR-tree", "RES_AQAR01_Area81" using 1:4 w lp title "AdpSTR-tree"
 
 
 5-) FOR CLUSTERED GRAPHS: 
 #gnuplot> load 'PLTCMD_clustered'
 
+
+
 ##############################################
-BELOW is OLD EXPERIMENTS...
+
+BELOW is OLD EXPERIMENTS...( Sadece fikir vermesi adına burada biraktım)
 
 # TEST #1:
 #--------------------

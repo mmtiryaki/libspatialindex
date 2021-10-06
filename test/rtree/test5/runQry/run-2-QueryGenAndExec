@@ -15,7 +15,7 @@ export qy=0.08
 # CHANGE THE FOLLOWING ONLY IF NEW INDEX İS LOADED !!..
 # DO NOT TOUCH FOLLOWING !!! the following MUST MATCH already exist "data" characteristics:  (Indexes should have been loaded before.)
 
-export ds=30000
+export ds=10000
 export data_loc_dist=u    # DATA LOC. dist.
 #POINT DATA:
 export dx=0
