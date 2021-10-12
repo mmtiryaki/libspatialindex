@@ -32,6 +32,11 @@
    command in "run-compare-results" script. 
 				
 				--> in "PLT" directory: We will have FINAL perf. results in 4-column in RES file.
+				
+   RES dosyasındaki "AQAR=1" satırındaki, STR ve AdpSTR değerleri farklı olabilir. Yani en azından birbirine yakın olması bekleniyor. 
+   Çünkü aynı sorgu setini aynı ağaç üzerinde exec ediyoruz. 
+   Ancak farklı zamanlarda çalıştırdığımızda tampon havuz durumuna göre elbette latency gecikmesi farklı olabiliyor. 
+   Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.  
 
 # PLOTTING EXAMPLES: 
 -------------------------

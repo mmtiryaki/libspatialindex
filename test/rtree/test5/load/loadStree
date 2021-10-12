@@ -15,8 +15,8 @@ awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /Write/|| 
 		  $1 ~ /Level/) print $0}' < r > ${treename}-Loading-Stats
 rm -rf r
+
 # mv already replaces..! do not need to remove old file.
-#mv  "${Streename}_${aqar}.dat" "${Streename}_${aqar}.idx" "${Streename}_${aqar}-Loading-Stats" ${dbdir}/
 mv  ${treename}.dat ${treename}.idx ${treename}-Loading-Stats ${dbdir}/
 
 

@@ -1,6 +1,8 @@
 set title "Leaf MBRs of R*-tree"
 set xlabel "x"
 set ylabel "y"
+unset logscale x
+unset logscale y
 set xrange[0:1.2]
 set yrange[0:1.2]
 set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2

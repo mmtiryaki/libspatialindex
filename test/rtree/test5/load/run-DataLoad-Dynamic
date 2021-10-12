@@ -5,19 +5,14 @@
 # utku: You may gplot "datafile" and "queryfile" by "GNUPLOT on pltdata, pltquery"  
 # utku: Query Modes:  [intersection | 10NN | selfjoin | contains]
 
-#export ds=20000
-#export data_loc_dist=u
-#export dx=0.01
-#export dy=0.01
-#export d_dist=f
-#export datafile="data${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}"
 
-export capacity=92
-export fillfactor=0.999
+# $datafile, ${ds}, ${data_loc_dist}, ${dx}, ${dy}, ${d_dist}"  has already been set..!
 
-export treename="tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}"
-export Dtreename="D_${treename}"
+capacity=92
+fillfactor=0.999
 
+treename="tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}"
+Dtreename="D_${treename}"
 
 echo Load R*-Tree $treename
 # 2>&1 : combines (or called redirect) standard error (stderr) with standard out (stdout)
