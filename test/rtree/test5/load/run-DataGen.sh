@@ -1,7 +1,7 @@
-#! /bin/bash
+#!/bin/bash
 
 # NOTE(utku): You can not run this file standalone. This file is called from "run-GenerateDataAndLoadDyn-STR" in which "ds data_loc_dist qs ..." are set (i.e. exported). 
-# ATTENTION: export x = 5  --> degil export x=5 olmalı 
+# ATTENTION: export x = 5  --> INCORRECT.   export x=5 is CORRECT 
 
 echo Generating dataset  #"Usage: ds data_loc_dist qs query_loc_dist d_dx d_dy d_dist q_dx q_dy q_dist" 
 
@@ -16,5 +16,8 @@ awk 'BEGIN {}
 {print $3," ",$6; print $3," ",$4; print ""}
 END{}' ${datafile} > ${pltdir}/pltdata
 
+echo -------------
 # you may plot data and query with the following command: (Of course never uncomment the following here)
 # gnuplot> plot "pltdata" using 1:2 w l, "pltquery" using 1:2 with lines lw 4
+
+

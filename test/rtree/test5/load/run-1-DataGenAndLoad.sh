@@ -1,4 +1,5 @@
-#! /bin/bash
+#!/bin/bash  
+# default shell is already bash
 
 # NOTE:(UK) This file generates data set and load it into R*tree and STR-tree. 
 # In case you wish to generate only data set and display it with gnuplot, then comment loading commands at the last 2 line.
@@ -32,6 +33,13 @@ export d_dist=f    # DATA EXTENT distribution: f or u: fixed size or uniformly d
 export pS=10000  # Page size (RPB). Used in ext-sort
 export bP=100    # buffer size (num of buffers). Used in ext-sort
 
+export capacity=92
+export fillfactor=0.999   # used in only bulk loading
+export treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}
+
+
+
+
 # construct related directories s.a data, database/ds, plt inside test-build area in eclipse WS.
 mkdir -p  $HOME/eclipse-workspace/test-build/data  # -p flag: mk dir only if dir does not exist.
 export datadir=$HOME/eclipse-workspace/test-build/data 
@@ -45,9 +53,13 @@ export pltdir=$HOME/eclipse-workspace/test-build/plt
 mkdir -p $HOME/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
 export dbdir=$HOME/eclipse-workspace/test-build/database/${ds}
 
+
+
+
+
 # No more global definitions exist in the following scirpts. Otherwise we should have used . "$SCRIPT_PATH"/run-DataGen if there were therein. 
-"$SCRIPT_PATH"/run-DataGen    # you may or may not write bash at the beginning. 
-bash "$SCRIPT_PATH"/run-DataLoad-Dynamic
-bash "$SCRIPT_PATH"/run-DataLoad-Static
+"$SCRIPT_PATH"/run-DataGen.sh    # you may or may not write bash at the beginning. 
+bash "$SCRIPT_PATH"/run-DataLoad.sh
+
 
 
