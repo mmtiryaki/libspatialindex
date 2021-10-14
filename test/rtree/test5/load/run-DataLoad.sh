@@ -60,6 +60,10 @@ for i in "${aqarlist[@]}"; do    # note that aqar=1 is the ordinary STR. Others 
 	echo -------------
 done
 
+####### PLOTTING: 
+bash $SCRIPT_PATH/../pltDynLevel0-draw.sh
+bash $SCRIPT_PATH/../pltSTRLevel0-draw.sh
+bash $SCRIPT_PATH/../pltSTRLevel0_0.3-draw.sh
 
 
 

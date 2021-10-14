@@ -19,17 +19,19 @@
 
 echo ----------------  R*-tree -------------
 treename=D_${treeprefix}
-timestatsfile=1
+readstatsfile=r1
+timestatsfile=t1
 
 for i in 0.1 0.3 0.7 1 1.4 3.3 10; do    
 	aqar="$i";
 	echo Querying $treename with ${queryfile}_$aqar;
 	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
+	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;
 	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;  
 	rm -rf r;
 	echo ----------------
 	done
-
+mv  $readstatsfile $pltdir
 mv  $timestatsfile $pltdir  
 
 echo ----------------
@@ -39,17 +41,20 @@ echo ----------------
 echo ----------------  STR-tree ------------- 
 
 treename=S_${treeprefix}_1
-timestatsfile=2
+readstatsfile=r2
+timestatsfile=t2
 
 for i in 0.1 0.3 0.7 1 1.4 3.3 10; do    
 	aqar="$i";
 	echo Querying $treename with ${queryfile}_$aqar;
 	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
+	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;
 	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;  
 	rm -rf r;
 	echo ----------------
 	done
 
+mv  $readstatsfile $pltdir
 mv  $timestatsfile $pltdir
 
 echo ----------------  
@@ -57,18 +62,19 @@ echo ----------------
 ########   Adp STR-tree  ########################
 
 echo ----------------  Adp-STR-tree -------------
- 
-timestatsfile=3
+readstatsfile=r3
+timestatsfile=t3
 for i in 0.1 0.3 0.7 1 1.4 3.3 10; do    
 	aqar="$i";
 	treename=S_${treeprefix}_${aqar};
 	echo Querying $treename with ${queryfile}_$aqar;
 	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
+	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;
 	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;  
 	rm -rf r;
 	echo ----------------
 	done
-
+mv  $readstatsfile $pltdir
 mv  $timestatsfile $pltdir  
 echo ----------------
 
@@ -85,7 +91,8 @@ sort -n $resultsdir/S_${treeprefix}_0.3_0.3 > c  # Adaptive STR
 if diff a b
 then
 echo "Same results with exhaustive search. Everything seems fine."
-paste $SCRIPT_PATH/0 $pltdir/1 $pltdir/2 $pltdir/3 > $pltdir/RES
+paste $SCRIPT_PATH/0 $pltdir/r1 $pltdir/r2 $pltdir/r3 > $pltdir/rRES
+paste $SCRIPT_PATH/0 $pltdir/t1 $pltdir/t2 $pltdir/t3 > $pltdir/tRES
 echo Results: `wc -l a`
 rm -rf b 
 else
@@ -100,20 +107,43 @@ else
 echo "PROBLEM! We got different results from exhaustive search!"
 fi
 
+##########   PLOTTING LOADING LATENCY  ##############################
 
-cat $pltdir/1 $pltdir/2 $pltdir/3 | sort -n | head -1 > minY
-cat $pltdir/1 $pltdir/2 $pltdir/3 | sort -n | tail -1 > maxY
+echo ----------------  PLOTTING... -------------
 
-echo minY
-echo maxY
+# Page Read stats:
+# set the Y margins. gnuplot autoscale does this. 
+minY=$(cat $pltdir/r1 $pltdir/r2 $pltdir/r3 | sort -n | head -1) 
+maxY=$(cat $pltdir/r1 $pltdir/r2 $pltdir/r3 | sort -n | tail -1) 
+#echo $minY
+#echo $maxY
+queryarea=$(echo "$qx*$qy" |bc -l)
 gnuplot -persist <<-EOFMarker
-	set title "Query Exec. Latency's Sensitivity to AQAR (DS=$ds, Query Area=64e-4)"
+	set title "Query Exec. Latency's Sensitivity to AQAR (DS=$ds, Query Area=$queryarea)"
 	set xlabel "AQAR"
-	set ylabel "Latency"
+	set ylabel "Number Of Nodes Read"
 	set xrange[0.1:10]
 	set yrange[${minY}-10:${maxY}+10]
 	set logscale x 2                    # veriye göre 10, 2, 4 gibi oynamalar yaparak güzel şekil oluşturabilirsin..
-	plot "~/eclipse-workspace/test-build/plt/RES" using 1:2 w lp title "R*tree", "~/eclipse-workspace/test-build/plt/RES" using 1:3 w lp title "STR-tree", "~/eclipse-workspace/test-build/plt/RES" using 1:4 w lp title "AdpSTR-tree"
+	plot "~/eclipse-workspace/test-build/plt/rRES" using 1:2 w lp title "R*tree", "~/eclipse-workspace/test-build/plt/rRES" using 1:3 w lp title "STR-tree", "~/eclipse-workspace/test-build/plt/rRES" using 1:4 w lp title "AdpSTR-tree"
+EOFMarker
+
+
+# Time(Latency) stats:
+# set the Y margins. gnuplot autoscale does this. 
+minY=$(cat $pltdir/t1 $pltdir/t2 $pltdir/t3 | sort -n | head -1) 
+maxY=$(cat $pltdir/t1 $pltdir/t2 $pltdir/t3 | sort -n | tail -1) 
+#echo $minY
+#echo $maxY
+queryarea=$(echo "$qx*$qy" |bc -l)
+gnuplot -persist <<-EOFMarker
+	set title "Query Exec. Latency's Sensitivity to AQAR (DS=$ds, Query Area=$queryarea)"
+	set xlabel "AQAR"
+	set ylabel "Latency (msec)"
+	set xrange[0.1:10]
+	set yrange[${minY}-10:${maxY}+10]
+	set logscale x 2                    # veriye göre 10, 2, 4 gibi oynamalar yaparak güzel şekil oluşturabilirsin..
+	plot "~/eclipse-workspace/test-build/plt/tRES" using 1:2 w lp title "R*tree", "~/eclipse-workspace/test-build/plt/tRES" using 1:3 w lp title "STR-tree", "~/eclipse-workspace/test-build/plt/tRES" using 1:4 w lp title "AdpSTR-tree"
 EOFMarker
 
 

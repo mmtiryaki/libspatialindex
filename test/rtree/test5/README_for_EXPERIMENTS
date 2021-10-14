@@ -7,7 +7,8 @@
           in "/data" dir: like data10000_u_0_0_f
           in "/database/ds" directory (f.e. ds:10000) : [ D_tree10000_u_0_0_f_92.dat, ....idx, ...Loading-Stats ]  and same for all other 7 STR trees (one is normal STR, the other 6 is AdpSTR)
           in "/plt" directory: pltdata, pltDynLevel0, pltSTRLevel0_0.1, ....pltSTRLevel0_10 
-  		
+		  Note that plt directory holds only 1 database's plot data i.e. the current database. (There is no prefix info, just pltdata, pltDynLevel0, ...)
+		      		
 2-) We generate "querysets" & "run it on Dyn and STR and AdpSTR" in "run-2-QueryGenAndExec".
 		----> Parameters here: 
           qs, query_loc_dist
@@ -25,21 +26,39 @@
 									 --> in "results" directory we will have "7 files for each Dyn-tree, STR-tree" 
 									      and 6 output results fies for Adp-STR. ( ...0.1_0.1, 0.3_0.3, 0.7_0.7, 1.4_1.4, 3.3_3.3, 10_10 (1_1 yok cunku bu zaten ordinary STR)
 									   
-		  run-compare-results       --> Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
+		  					         --> Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
 		  
-3-) If e/t seems fine, then results are combined into "RES...." file in "plt" directory with 
-				paste 0 1 2 3 > "RES...."
-   command in "run-compare-results" script. 
+3-) If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with 
+				paste 0 r1 r2 r3 > "rRES"   --> holds number of reads stats.
+				paste 0 t1 t2 t3 > "rRES"   --> Latency stats.
+   command in VALIDATION section in run-QueryExecOnTrees.
 				
-				--> in "PLT" directory: We will have FINAL perf. results in 4-column in RES file.
+				--> in "PLT" directory: We will have FINAL perf. results in 4-column in rRES and tRES files.
 				
-   RES dosyasındaki "AQAR=1" satırındaki, STR ve AdpSTR değerleri farklı olabilir. Yani en azından birbirine yakın olması bekleniyor. 
+   RES dosyalarındaki "AQAR=1" satırındaki, STR ve AdpSTR değerleri farklı olabilir. Yani en azından birbirine yakın olması bekleniyor. 
    Çünkü aynı sorgu setini aynı ağaç üzerinde exec ediyoruz. 
    Ancak farklı zamanlarda çalıştırdığımızda tampon havuz durumuna göre elbette latency gecikmesi farklı olabiliyor. 
    Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.  
 
-# PLOTTING EXAMPLES: 
+# PLOTTING: 
 -------------------------
+You do not need to activate GnuPlot. Run sh files under /test5 to plot data, query and Leaf MBRs of R*-tree, STR-tree and Adp-STR-tree.
+Use dataset size as the input for data plotting, query AQAR as the input for query plotting.
+$ pltdata-draw.sh -d10000
+$ pltquery-draw.sh -a0.3   --> a: aspect ratio.
+$ pltDynLevel0-draw.sh -d10000
+...
+
+You may also plot pltdata and Leaf MBR and pltquery during loading & querying IFF you uncomment the plotting line at the script file.
+
+Additionally rRES & tRES plottings are done at the end of runQry scripts..
+
+
+
+
+##############################################
+BELOW is OLD PLOTTINGS...( Sadece fikir vermesi adına burada biraktım)
+
 Run "gnuplot" in the /test5 directory
 
 1-) first Part: Generate data set and Load trees. you may plot data & query & Leaf MBRs with the following #gnuplot> specifications:
@@ -89,7 +108,7 @@ plot "RES_AQAR01_Area81" using 1:2 w lp title "R*tree", "RES_AQAR01_Area81" usin
 
 ##############################################
 
-BELOW is OLD EXPERIMENTS...( Sadece fikir vermesi adına burada biraktım)
+BELOW is VERY OLD PLOTTINGS...( Sadece fikir vermesi adına burada biraktım)
 
 # TEST #1:
 #--------------------

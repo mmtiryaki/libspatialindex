@@ -16,8 +16,11 @@ awk 'BEGIN {}
 {print $3," ",$6; print $3," ",$4; print ""}
 END{}' ${datafile} > ${pltdir}/pltdata
 
+####### PLOTTING: 
+bash $SCRIPT_PATH/../pltdata-draw.sh
+
 echo -------------
-# you may plot data and query with the following command: (Of course never uncomment the following here)
-# gnuplot> plot "pltdata" using 1:2 w l, "pltquery" using 1:2 with lines lw 4
+# Later, you may plot data and query within bash.
+# test5/$ ./pltdata-draw.sh
 
 

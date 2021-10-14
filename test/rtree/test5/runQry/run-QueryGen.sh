@@ -17,6 +17,8 @@ for i in 0.1 0.3 0.7 1 1.4 3.3 10; do
 	END{}' ${queryfile}_${aqar} > ${pltdir}/pltquery${aqar};
 	done
 
+###### PLOTTING a sample query set: 
+bash $SCRIPT_PATH/../pltquery-draw.sh -a0.3
 echo -----------
 
 
