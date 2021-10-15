@@ -16,6 +16,8 @@ gnuplot -persist <<-EOFMarker
 	unset logscale y
 	set xrange[0:1.2]
 	set yrange[0:1.2]
+	set grid
+	set size square   
 	set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
 	plot "~/eclipse-workspace/test-build/plt/pltSTRLevel0_0.3" using 1:2 w l  title "Leaf-MBR" ls 2  
 EOFMarker

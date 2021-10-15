@@ -14,6 +14,10 @@ gnuplot -persist <<-EOFMarker
 	set title "Query Set with 100 query-regions in Unit Area"
 	set xlabel "x"
 	set ylabel "y"
+	set xtics 0.1
+	set ytics 0.1
+	set grid
+	set size square   
 	unset logscale x
 	unset logscale y
 	set xrange[0:1.2]

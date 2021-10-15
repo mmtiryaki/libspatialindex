@@ -18,6 +18,8 @@ gnuplot -persist <<-EOFMarker
 	unset logscale y
 	set xrange[0:1.2]
 	set yrange[0:1.2]
+	set grid
+	set size square   
 	set style line 1 lc rgb 'black' pt 7 pointsize 0.3   # unset style line 1
 	plot "~/eclipse-workspace/test-build/plt/pltdata" using 1:2 w p title "point" ls 1  #-->> POINT data set
 EOFMarker
