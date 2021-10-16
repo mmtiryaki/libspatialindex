@@ -10,7 +10,7 @@ echo Load R*-Tree $treename
 # > r  : redirect std output to file r with replacing r.  >> : redirect and append to file r.
 #time ../../test-rtree-RTreeLoad $datafile $treename $capacity intersection > r 2>&1    # intersection is query type. But we are not sending any query!!
 
-time ${bindir}/test-rtree-RTreeLoad $datafile $treename $capacity intersection 2>r 1>${pltdir}/pltDynLevel0     #redirect cerr to 'r' AND redirect cout to plt...file
+time ${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $capacity intersection 2>r 1>${pltdir}/pltDynLevel0     #redirect cerr to 'r' AND redirect cout to plt...file
 awk '{if ($1 ~ /Time/  || 
 		  $1 ~ /TOTAL/ || 
 		  $1 ~ /Buffer/ || 
@@ -22,9 +22,10 @@ awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /Number/ || 
 		  $1 ~ /Read/|| 
 		  $1 ~ /Write/|| 
-		  $1 ~ /Level/) print $0}' < r > "${treename}-Loading-Stats"
+		  $1 ~ /Level/) print $0}' < r > ${dbdir}/"${treename}-Loading-Stats"
 rm -rf r
-mv  "${treename}.dat" "${treename}.idx" "${treename}-Loading-Stats" ${dbdir}/
+# mv already replaces..! do not need to remove old file. But moving takes time. don't
+#mv  "${treename}.dat" "${treename}.idx" "${treename}-Loading-Stats" ${dbdir}/
 echo -------------
 
 
@@ -40,7 +41,7 @@ for i in "${aqarlist[@]}"; do    # note that aqar=1 is the ordinary STR. Others 
 		echo Load Adp-STR R-Tree $treename;
 	fi;		
 	
-	time ${bindir}/test-rtree-RTreeBulkLoad $datafile $treename $capacity $fillfactor ${aqar} $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_${aqar};  #redirect cerr to 'r' AND redirect cout to plt...file
+	time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $capacity $fillfactor ${aqar} $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_${aqar};  #redirect cerr to 'r' AND redirect cout to plt...file
 	awk '{if ($1 ~ /Time/  || 
 		  $1 ~ /TOTAL/ || 
 		  $1 ~ /Buffer/ || 
@@ -52,11 +53,9 @@ for i in "${aqarlist[@]}"; do    # note that aqar=1 is the ordinary STR. Others 
 		  $1 ~ /Number/ || 
 		  $1 ~ /Read/|| 
 		  $1 ~ /Write/|| 
-		  $1 ~ /Level/) print $0}' < r > ${treename}-Loading-Stats;
+		  $1 ~ /Level/) print $0}' < r > ${dbdir}/${treename}-Loading-Stats;
 	rm -rf r;
 
-	# mv already replaces..! do not need to remove old file.
-	mv  ${treename}.dat ${treename}.idx ${treename}-Loading-Stats ${dbdir}/;
 	echo -------------
 done
 
