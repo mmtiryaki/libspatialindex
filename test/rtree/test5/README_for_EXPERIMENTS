@@ -49,10 +49,24 @@ $ pltquery-draw.sh -a0.3   --> a: aspect ratio.
 $ pltDynLevel0-draw.sh -d10000
 ...
 
-You may also plot pltdata and Leaf MBR and pltquery during loading & querying IFF you uncomment the plotting line at the script file.
+You may (or not) also plot pltdata and Leaf MBRs and pltquery during loading & querying IFF you (un)comment the plotting line at 
+the script file.
 
-Additionally rRES & tRES plottings are done at the end of runQry scripts..
+Additionally rRES & tRES plottings are done at the end of runQry scripts by default.
 
+PLOTs in CCPE article:
+---------------------------
+Figure 2 in CCPE article is not generated with these scripts (run-1-.. and run-2..). for this evaluation, run the followings and get the 
+Time elapsed (msec) for STR / R* ree loading is ...  values  in /database/10000/ S_tree10000_u_0_0_f_92_0.3-Loading-Stats etc. files..
+run-1-DataGenAndLoad.sh -d10000
+run-1-DataGenAndLoad.sh -d20000
+...
+run-1-DataGenAndLoad.sh -d50000
+
+Figure 3 has been generated as the output of run-1-DataGenAndLoad.sh -d50000 script and 
+Figure 4 (a) and (c) have been generated as the output of run-2-QueryGenAndExec.sh -d50000 script.
+
+Figure 4 (b)
 
 
 
