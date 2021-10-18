@@ -17,7 +17,7 @@ gnuplot -persist <<-EOFMarker
 	set title "Q Exec. Latencies Sensitivity to Data Volume (AQAR=${aqar},QueryArea=$area " 
 	set xrange [ * : * ] noreverse writeback
 	set x2range [ * : * ] noreverse writeback
-	set yrange [ 0.000 : 100. ] noreverse writeback
+	set yrange [ 0.000 : 500. ] noreverse writeback
 	set y2range [ * : * ] noreverse writeback
 	set zrange [ * : * ] noreverse writeback
 	set cbrange [ * : * ] noreverse writeback
@@ -25,7 +25,7 @@ gnuplot -persist <<-EOFMarker
 	NO_ANIMATION = 1
 	## Last datafile plotted: "immigration.dat"
 	## plot 'immigration.dat' using 6:xtic(1) ti col, '' u 12 ti ## col, '' u 13 ti col, '' u 14 ti col
-	plot '$HOME/eclipse-workspace/test-build/plt/AllDSoutput' using 2:xtic(1) ti col, '' u 3 ti col, '' u 4 ti col, '' u 5 ti col, '' u 6 ti col, '' u 7 ti col, '' u 8 ti col, '' u 9 ti col
+	plot '$HOME/eclipse-workspace/test-build/plt/AllDSoutput' using 2:xtic(1) ti col, '' using 3 ti col, '' u 4 ti col
 EOFMarker
 
 

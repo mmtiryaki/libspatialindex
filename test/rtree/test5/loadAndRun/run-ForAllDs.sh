@@ -48,7 +48,7 @@ mkdir -p $HOME/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir 
 pltdir=$HOME/eclipse-workspace/test-build/plt
 
 
-dslist=(10000 20000)  # data set sizes: 10K, 20K....100K
+dslist=(10000 20000 30000 40000 50000 60000 70000 80000 90000 100000)  # data set sizes: 10K, 20K....100K
 for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others are Adp-STR.
 	ds=$i;
 	dpostfix=${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist};
@@ -134,7 +134,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 # QUERYING
 # remove the output if exists.
 rm -rf $pltdir/AllDSoutput
-
+echo DataSetSize R*-tree  STR-tree  Adp-STR-tree >$pltdir/AllDSoutput
 qs=100
 query_loc_dist=u  # QUERY location distribution: uniform of gaussian, u or g
 # AQAR = qx/qy changes from [0.1, 0.3, 0.7, 1, 1.428, 3.33, 10 ]
@@ -231,10 +231,10 @@ gnuplot -persist <<-EOFMarker
 	set xtics border in scale 0,0 nomirror rotate by -45  autojustify
 	set xtics  norangelimit 
 	set xtics   ()
-	set title "Q Exec. Latencies Sensitivity to Data Volume (AQAR=${aqar},QueryArea=$area " 
+	set title "Q Exec. Latencies Sensitivity to Data Volume (QueryArea=$area, AQAR=${aqar})" 
 	set xrange [ * : * ] noreverse writeback
 	set x2range [ * : * ] noreverse writeback
-	set yrange [ 0.000 : 100. ] noreverse writeback
+	set yrange [ 0.000 : 500. ] noreverse writeback
 	set y2range [ * : * ] noreverse writeback
 	set zrange [ * : * ] noreverse writeback
 	set cbrange [ * : * ] noreverse writeback
@@ -242,7 +242,7 @@ gnuplot -persist <<-EOFMarker
 	NO_ANIMATION = 1
 	## Last datafile plotted: "immigration.dat"
 	## plot 'immigration.dat' using 6:xtic(1) ti col, '' u 12 ti ## col, '' u 13 ti col, '' u 14 ti col
-	plot '$pltdir/AllDSoutput' using 2:xtic(1) ti col, '' u 3 ti col, '' u 4 ti col, '' u 5 ti col, '' u 6 ti col, '' u 7 ti col, '' u 8 ti col, '' u 9 ti col
+	plot '$HOME/eclipse-workspace/test-build/plt/AllDSoutput' using 2:xtic(1) ti col, '' using 3 ti col, '' u 4 ti col
 EOFMarker
 
 

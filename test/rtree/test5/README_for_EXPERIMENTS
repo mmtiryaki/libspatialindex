@@ -1,4 +1,4 @@
-1-) We generate dataset & Load Dyn and STR with "run-1-DataGenAndLoad"
+1-)  "$./load/run-1-DataGenAndLoad -d10000":  We generate dataset & Load Dyn and STR 
         ----> Parameters here: 
   		  ds, data_loc_dist, 
   		  dx, dy, d_dist, (extent of data regions and extent distr.)
@@ -9,7 +9,7 @@
           in "/plt" directory: pltdata, pltDynLevel0, pltSTRLevel0_0.1, ....pltSTRLevel0_10 
 		  Note that plt directory holds only 1 database's plot data i.e. the current database. (There is no prefix info, just pltdata, pltDynLevel0, ...)
 		      		
-2-) We generate "querysets" & "run it on Dyn and STR and AdpSTR" in "run-2-QueryGenAndExec".
+2-) "$./runQry/run-2-QueryGenAndExec -d10000".: We generate "querysets" & "run it on Dyn and STR and AdpSTR" 
 		----> Parameters here: 
           qs, query_loc_dist
 		  qx,qy  ( extent, always fix. Because we already modify AQAR in the code)
@@ -39,9 +39,15 @@
    Çünkü aynı sorgu setini aynı ağaç üzerinde exec ediyoruz. 
    Ancak farklı zamanlarda çalıştırdığımızda tampon havuz durumuna göre elbette latency gecikmesi farklı olabiliyor. 
    Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.  
+   
+ 4-) "$./loadAndRun/run-ForAllDs.sh -rQueryArea -aAQAR":  Q. Execution sens. to Data set size between 10K - to 100K.for a specific "Query-Area" and "AQAR".
+     "$./loadAndRun/run-ForAllDs2.sh":  Önceden oluşturulan AllDSoutput vesini bar plot olarak çiziyor.
+     /load ve /runQry  altındaki script'lerin biraraya gelmesi. 
+     10K-100K data generation. Ağaçların yüklenmesi ve belli bir ortalama alan ve AQAR değerli iş yüklerinin her indeks'de çalıştırılması.
+     Sorgu sonuçlarının karşılaştırılıp doğrulanması. İndeks çalışma zamanlarının saklanması ((AllDSoutput)) ve bar graph plotting. 
 
-# PLOTTING: 
--------------------------
+PLOTs in CCPE article:
+---------------------------
 You do not need to activate GnuPlot. Run sh files under /test5 to plot data, query and Leaf MBRs of R*-tree, STR-tree and Adp-STR-tree.
 Use dataset size as the input for data plotting, query AQAR as the input for query plotting.
 $ pltdata-draw.sh -d10000
@@ -51,22 +57,24 @@ $ pltDynLevel0-draw.sh -d10000
 
 You may (or not) also plot pltdata and Leaf MBRs and pltquery during loading & querying IFF you (un)comment the plotting line at 
 the script file.
-
 Additionally rRES & tRES plottings are done at the end of runQry scripts by default.
 
-PLOTs in CCPE article:
----------------------------
-Figure 2 in CCPE article is not generated with these scripts (run-1-.. and run-2..). for this evaluation, run the followings and get the 
+"Figure 2" in CCPE article is not generated with these scripts (run-1-.. and run-2..). for this evaluation, run the followings and get the 
 Time elapsed (msec) for STR / R* ree loading is ...  values  in /database/10000/ S_tree10000_u_0_0_f_92_0.3-Loading-Stats etc. files..
 run-1-DataGenAndLoad.sh -d10000
 run-1-DataGenAndLoad.sh -d20000
 ...
 run-1-DataGenAndLoad.sh -d50000
 
-Figure 3 has been generated as the output of run-1-DataGenAndLoad.sh -d50000 script and 
-Figure 4 (a) and (c) have been generated as the output of run-2-QueryGenAndExec.sh -d50000 script.
+"Figure 3" has been generated as the output of run-1-DataGenAndLoad.sh -d50000 script and 
+"Figure 4 (a) and (c)" have been generated as the output of run-2-QueryGenAndExec.sh -d50000 script.
 
-Figure 4 (b)
+"Figure 4 (b) bar-graph": Q. Execution sens. to Dta set size between 10K - to 100K.
+output of 4th section above.
+
+
+
+
 
 
 
