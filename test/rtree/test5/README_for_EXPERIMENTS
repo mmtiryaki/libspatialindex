@@ -1,50 +1,53 @@
-1-)  "$./load/run-1-DataGenAndLoad -d10000":  We generate dataset & Load Dyn and STR 
-        ----> Parameters here: 
-  		  ds, data_loc_dist, 
+Sample execution parameters:
+RTRee_Bulk_Load:  data/data database/tree 92 0.99 1 10000 100
+
+1-)  "$./load/run-1-DataGenAndLoad -d10000":  We generate dataset & Load Dyn and STR
+        ----> Parameters here:
+  		  ds, data_loc_dist,
   		  dx, dy, d_dist, (extent of data regions and extent distr.)
   		  pS,bP for ext. sorting
         ----> At the end of this part, we will have:
           in "/data" dir: like data10000_u_0_0_f
           in "/database/ds" directory (f.e. ds:10000) : [ D_tree10000_u_0_0_f_92.dat, ....idx, ...Loading-Stats ]  and same for all other 7 STR trees (one is normal STR, the other 6 is AdpSTR)
-          in "/plt" directory: pltdata, pltDynLevel0, pltSTRLevel0_0.1, ....pltSTRLevel0_10 
+          in "/plt" directory: pltdata, pltDynLevel0, pltSTRLevel0_0.1, ....pltSTRLevel0_10
 		  Note that plt directory holds only 1 database's plot data i.e. the current database. (There is no prefix info, just pltdata, pltDynLevel0, ...)
-		      		
-2-) "$./runQry/run-2-QueryGenAndExec -d10000".: We generate "querysets" & "run it on Dyn and STR and AdpSTR" 
-		----> Parameters here: 
+
+2-) "$./runQry/run-2-QueryGenAndExec -d10000".: We generate "querysets" & "run it on Dyn and STR and AdpSTR"
+		----> Parameters here:
           qs, query_loc_dist
 		  qx,qy  ( extent, always fix. Because we already modify AQAR in the code)
-		
+
 		----> At the end of this part, we will have:
 		  # Codes of Query Ave. Aspect Ratio (AQAR). 01,07,03,1,14,33,10
 		  run-QueryGen       --> in "query" directory:We will have 7 querysets like "query100_u_0.5_0.5_0.1" "query100_u_0.5_0.5_0.3" ..."query100_u_0.5_0.5_1" .."query100_u_0.5_0.5_10"
-		  					     in "plt" directory:  pltquery0.1, ...pltquery10 
-		                                 
+		  					     in "plt" directory:  pltquery0.1, ...pltquery10
+
 		  run-QueryExecOnTrees --> in "plt" directory: We will have 3 files named as "1,2,3"  ( file 0 is always there!)
 									     1 has R*tree results for all 7 query sets.
 									     2 has STR-tree results for all 7 query sets.
 									     3 has AdpSTR-tree results for all 7 query sets.
-									 --> in "results" directory we will have "7 files for each Dyn-tree, STR-tree" 
+									 --> in "results" directory we will have "7 files for each Dyn-tree, STR-tree"
 									      and 6 output results fies for Adp-STR. ( ...0.1_0.1, 0.3_0.3, 0.7_0.7, 1.4_1.4, 3.3_3.3, 10_10 (1_1 yok cunku bu zaten ordinary STR)
-									   
+
 		  					         --> Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
-		  
-3-) If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with 
+
+3-) If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with
 				paste 0 r1 r2 r3 > "rRES"   --> holds number of reads stats.
 				paste 0 t1 t2 t3 > "rRES"   --> Latency stats.
    command in VALIDATION section in run-QueryExecOnTrees.
-				
+
 				--> in "PLT" directory: We will have FINAL perf. results in 4-column in rRES and tRES files.
-				
-   RES dosyalarındaki "AQAR=1" satırındaki, STR ve AdpSTR değerleri farklı olabilir. Yani en azından birbirine yakın olması bekleniyor. 
-   Çünkü aynı sorgu setini aynı ağaç üzerinde exec ediyoruz. 
-   Ancak farklı zamanlarda çalıştırdığımızda tampon havuz durumuna göre elbette latency gecikmesi farklı olabiliyor. 
-   Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.  
-   
+
+   RES dosyalarındaki "AQAR=1" satırındaki, STR ve AdpSTR değerleri farklı olabilir. Yani en azından birbirine yakın olması bekleniyor.
+   Çünkü aynı sorgu setini aynı ağaç üzerinde exec ediyoruz.
+   Ancak farklı zamanlarda çalıştırdığımızda tampon havuz durumuna göre elbette latency gecikmesi farklı olabiliyor.
+   Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.
+
  4-) "$./loadAndRun/run-ForAllDs.sh -rQueryArea -aAQAR":  Q. Execution sens. to Data set size between 10K - to 100K.for a specific "Query-Area" and "AQAR".
      "$./loadAndRun/run-ForAllDs2.sh":  Önceden oluşturulan AllDSoutput vesini bar plot olarak çiziyor.
-     /load ve /runQry  altındaki script'lerin biraraya gelmesi. 
+     /load ve /runQry  altındaki script'lerin biraraya gelmesi.
      10K-100K data generation. Ağaçların yüklenmesi ve belli bir ortalama alan ve AQAR değerli iş yüklerinin her indeks'de çalıştırılması.
-     Sorgu sonuçlarının karşılaştırılıp doğrulanması. İndeks çalışma zamanlarının saklanması ((AllDSoutput)) ve bar graph plotting. 
+     Sorgu sonuçlarının karşılaştırılıp doğrulanması. İndeks çalışma zamanlarının saklanması ((AllDSoutput)) ve bar graph plotting.
 
 PLOTs in CCPE article:
 ---------------------------
@@ -55,18 +58,18 @@ $ pltquery-draw.sh -a0.3   --> a: aspect ratio.
 $ pltDynLevel0-draw.sh -d10000
 ...
 
-You may (or not) also plot pltdata and Leaf MBRs and pltquery during loading & querying IFF you (un)comment the plotting line at 
+You may (or not) also plot pltdata and Leaf MBRs and pltquery during loading & querying IFF you (un)comment the plotting line at
 the script file.
 Additionally rRES & tRES plottings are done at the end of runQry scripts by default.
 
-"Figure 2" in CCPE article is not generated with these scripts (run-1-.. and run-2..). for this evaluation, run the followings and get the 
+"Figure 2" in CCPE article is not generated with these scripts (run-1-.. and run-2..). for this evaluation, run the followings and get the
 Time elapsed (msec) for STR / R* ree loading is ...  values  in /database/10000/ S_tree10000_u_0_0_f_92_0.3-Loading-Stats etc. files..
 run-1-DataGenAndLoad.sh -d10000
 run-1-DataGenAndLoad.sh -d20000
 ...
 run-1-DataGenAndLoad.sh -d50000
 
-"Figure 3" has been generated as the output of run-1-DataGenAndLoad.sh -d50000 script and 
+"Figure 3" has been generated as the output of run-1-DataGenAndLoad.sh -d50000 script and
 "Figure 4 (a) and (c)" have been generated as the output of run-2-QueryGenAndExec.sh -d50000 script.
 
 "Figure 4 (b) bar-graph": Q. Execution sens. to Dta set size between 10K - to 100K.
@@ -93,7 +96,7 @@ set xrange[0:1.2]
 set yrange[0:1.2]
 set style line 1 lc rgb 'black' pt 7 pointsize 0.3   # unset style line 1
 plot "pltdata" using 1:2 w p title "point" ls 1  #-->> POINT data set
-plot "pltdata" using 1:2 w l title "region" ls 2  -->> REGION data set   
+plot "pltdata" using 1:2 w l title "region" ls 2  -->> REGION data set
 
 [pltDynLevel0-draw, pltSTRLevel0_*-draw]
 set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
@@ -101,7 +104,7 @@ plot "pltDynLevel0" using 1:2 w l  title "Leaf-MBR" ls 2
 plot "pltSTRLevel0_1" using 1:2 w l  title "Leaf-MBR" ls 2
 
 2-) At the end of part-2: You may plot query sets each of which has different AQAR(01,07,03,1,14,33,10)
-[pltquery-draw] 
+[pltquery-draw]
 plot "pltquery01" using 1:2 w l, "pltquery10" using 1:2 w l lw 1
 
 3-) At the end of part-3: (and Query Exec Perf. Results in "RES" file)
@@ -123,7 +126,7 @@ set logscale x 10                    # veriye göre 10, 2, 4 gibi oynamalar yapa
 plot "RES_AQAR01_Area81" using 1:2 w lp title "R*tree", "RES_AQAR01_Area81" using 1:3 w lp title "STR-tree", "RES_AQAR01_Area81" using 1:4 w lp title "AdpSTR-tree"
 
 
-5-) FOR CLUSTERED GRAPHS: 
+5-) FOR CLUSTERED GRAPHS:
 #gnuplot> load 'PLTCMD_clustered'
 
 
@@ -138,8 +141,8 @@ BELOW is VERY OLD PLOTTINGS...( Sadece fikir vermesi adına burada biraktım)
 # DS: 50.000
 # dx=dy= 0.01  fix.  Alan: 1e-4
 # Query Set Size=100
-# aspect ration=r= qx/qy changes from   0.01  0.25   1   4   100  
-# qx/qy= 0.001/0.1 ,   0.005/0.02,   0.01/0.01,    0.1/0.001,   0.02/0.005.   Alan== 1e-4   
+# aspect ration=r= qx/qy changes from   0.01  0.25   1   4   100
+# qx/qy= 0.001/0.1 ,   0.005/0.02,   0.01/0.01,    0.1/0.001,   0.02/0.005.   Alan== 1e-4
 
 #gnuplot> set xlabel "En/Boy"
 #gnuplot> set ylabel "Okunan Sayfa Sayisi"
@@ -165,24 +168,24 @@ BELOW is VERY OLD PLOTTINGS...( Sadece fikir vermesi adına burada biraktım)
 # Query Set Size=100
 # Query Ave. Aspect Ratio=r= qx/qy changes from   0.1   0.3   0.7   1   1.428   3.33    10
 #  (1/p) / p*1 = AQAR  ==>  1/ p^2 = 0.1     ==> p^2 = 10    ==> p= 3.16         AQAR=0.1     (0.01/3.16)/0.01*3.16
-#					    	1/ p^2 = 0.3     ==> p^2 = 3.333 ==> p= 1.825        AQAR=0.3     (0.01/1.825)/0.01*1.825 
+#					    	1/ p^2 = 0.3     ==> p^2 = 3.333 ==> p= 1.825        AQAR=0.3     (0.01/1.825)/0.01*1.825
 #                           1/ p^2 = 0.7     ==> p^2 = 1.428 ==>  p= 1.194       AQAR=0.7     (0.01/1.194)/0.01*1.194
 #						    1/ p^2 = 1       ==> p^2 = 1     ==>  p= 1           AQAR=1       (0.01/1)/0.01*1
 #						    1/ p^2 = 1.428   ==> p^2 = 0.7 ==>  p= 0.836         AQAR=1.428   (0.01/0.836)/0.01*0.836
 #						    1/ p^2 = 3.33       ==> p^2 = 0,3 ==>  p= 0.547		 AQAR=3.33    (0.01/0.547)/0.01*0.547
-#						    1/ p^2 = 10       ==> p^2 = 0,1 ==>  p= 0.316		 AQAR=10      (0.01/0.316)/0.01*0.316 
+#						    1/ p^2 = 10       ==> p^2 = 0,1 ==>  p= 0.316		 AQAR=10      (0.01/0.316)/0.01*0.316
 
 #gnuplot> set xlabel "AQAR"
 #gnuplot> set ylabel "Number Of Nodes Read"
 #gnuplot> set title "The Index's Sensitivity to Workload Ave. Aspect Ratio"
 #gnuplot> set xrange[0.1:10]
 #gnuplot> set logscale x 2                    # veriye göre 10, 2, 4 gibi oynamalar yaparak güzel şekil oluşturabilirsin..
-#gnuplot> plot "pltWLchangeOn-Dyn-STR" using 1:2 w lp title "R*tree", "pltWLchangeOn-Dyn-STR" using 1:3 w lp title "STR-tree", "pltWLchangeOn-Dyn-STR" using 1:4 w lp title "Adaptive-STR-tree"	
+#gnuplot> plot "pltWLchangeOn-Dyn-STR" using 1:2 w lp title "R*tree", "pltWLchangeOn-Dyn-STR" using 1:3 w lp title "STR-tree", "pltWLchangeOn-Dyn-STR" using 1:4 w lp title "Adaptive-STR-tree"
 
-# AQAR= qx/qy, Area= 0.02 * 0.02 = 4e-4  
+# AQAR= qx/qy, Area= 0.02 * 0.02 = 4e-4
 #AQAR   	R*tree-disk-IO     STR-tree-disk-io			Adaptif STR-disk-io
-#-----------------------------------------------------------------------  
- 0.1		526					482							431	
+#-----------------------------------------------------------------------
+ 0.1		526					482							431
  0.3	    472					440							417
  0.7		454       			426							415
  1			447					425							425
@@ -190,27 +193,27 @@ BELOW is VERY OLD PLOTTINGS...( Sadece fikir vermesi adına burada biraktım)
  3.33		474					449							426
  10		    526					489							478
 
-# AQAR= qx/qy, Area= 0.03 * 0.03 = 9e-4  
+# AQAR= qx/qy, Area= 0.03 * 0.03 = 9e-4
 #AQAR   	R*tree-disk-IO     STR-tree-disk-io			Adaptif STR-disk-io
-#-----------------------------------------------------------------------  
+#-----------------------------------------------------------------------
 # 0.1			655					613						520
 # 0.3	    	571					513						494
-# 0.7		    558		            495						503   							
+# 0.7		    558		            495						503
 # 1			557					504						504
-# 1.428		537					508						498	
+# 1.428		537					508						498
 # 3.33		571					547						498
 # 10			674					605						569
 
 
-									
-# AQAR= qx/qy, Area= 0.05 * 0.05 = 25e-4   
+
+# AQAR= qx/qy, Area= 0.05 * 0.05 = 25e-4
 #AQAR   	R*tree-disk-IO     STR-tree-disk-io			Adaptif STR-disk-io
-#-----------------------------------------------------------------------  
+#-----------------------------------------------------------------------
 # 0.1			854					788					    708
 # 0.3	    	796					730						691
-# 0.7		    783					682						700		               							
+# 0.7		    783					682						700
 # 1			771					686						686
-# 1.428		748					672						709	
+# 1.428		748					672						709
 # 3.33		789					723						699
 # 10			955					808						741
 
@@ -218,7 +221,7 @@ BELOW is VERY OLD PLOTTINGS...( Sadece fikir vermesi adına burada biraktım)
 
 
 
-		
+
 
 
 
