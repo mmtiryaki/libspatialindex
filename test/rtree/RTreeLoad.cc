@@ -5,7 +5,7 @@
  * Copyright (c) 2002, Marios Hadjieleftheriou
  *
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -77,11 +77,11 @@ public:
 			}
 		}
 		else{
-			std::cout << pr->m_pLow[0] << " " << pr->m_pLow[1] << std::endl;
-			std::cout << pr->m_pHigh[0] << " " << pr->m_pLow[1] << std::endl;
-			std::cout << pr->m_pHigh[0] << " " << pr->m_pHigh[1] << std::endl;
-			std::cout << pr->m_pLow[0] << " " << pr->m_pHigh[1] << std::endl;
-			std::cout << pr->m_pLow[0] << " " << pr->m_pLow[1] << std::endl << std::endl;
+			std::cout << (double)pr->m_pLow[0] << " " << (double)pr->m_pLow[1] << std::endl;
+			std::cout << (double)pr->m_pHigh[0] << " " << (double)pr->m_pLow[1] << std::endl;
+			std::cout << (double)pr->m_pHigh[0] << " " << (double)pr->m_pHigh[1] << std::endl;
+			std::cout << (double)pr->m_pLow[0] << " " << (double)pr->m_pHigh[1] << std::endl;
+			std::cout << (double)pr->m_pLow[0] << " " << (double)pr->m_pLow[1] << std::endl << std::endl;
 		}
 		if (!ids.empty()) {
 					nextEntry = ids.front();

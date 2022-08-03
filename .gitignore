@@ -21,3 +21,4 @@ docs/doxygen/html*/
 docs/doxygen/xml
 .project
 .cproject
+.dbeaver/
