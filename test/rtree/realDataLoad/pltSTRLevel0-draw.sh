@@ -6,8 +6,8 @@ gnuplot -persist <<-EOFMarker
 	set ylabel "y"
 	unset logscale x
 	unset logscale y
-	set xrange[${"xl"}:${"xh"}]
-	set yrange[${"yl"}:${"yh"}]
+	set xrange[$1:$3]
+	set yrange[$2:$4]
 	set grid
 	set size square
 	set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2

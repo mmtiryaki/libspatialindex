@@ -2,7 +2,7 @@
 # default shell is already bash
 
 # NOTE:(UK) This file uses real data sets and load it into R*tree and STR-tree.
-# sample usage: ...$./realDataLoad.sh nyc_cb
+# sample usage: ...$./realDataLoad.sh nyc_cb minx miny maxx maxy 
 # my execs:
 bindir=$HOME/eclipse-workspace/test-build/
 
@@ -19,10 +19,6 @@ datadir=$HOME/eclipse-workspace/test-build/data
 
 datafilename=$1  #this takes the first arguman from commandline..
 datafile=${datadir}/$datafilename
-export xl=$2
-export yl=$3
-export xh=$4
-export yh=$5
 
 
 mkdir -p $HOME/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir does not exist.
@@ -30,8 +26,10 @@ pltdir=$HOME/eclipse-workspace/test-build/plt
 
 mkdir -p $HOME/eclipse-workspace/test-build/database    # -p flag: mk dir only if dir does not exist.
 dbdir=$HOME/eclipse-workspace/test-build/database
-
 treename=tree_$datafilename
+
+echo Retrieve data from PGSQL
+PGPASSWORD=mypg1 psql -h localhost -d nyc -U postgres -c 'with nyc_ss as(SELECT gid, ST_X(geom) as xl, st_y(geom) as yl, ST_X(geom) as xh, st_y(geom) as yh FROM nyc_subway_stations ) select 1 as INSERT,nyc_ss.gid,xl,yl,xh,yh from nyc_ss' > $datafile 
 
 echo Load R*-Tree ${treename}_Dyn
 # 2>&1 : combines (or called redirect) standard error (stderr) with standard out (stdout)
@@ -75,8 +73,8 @@ time ${bindir}/test-rtree-RTreeBulkLoad ${datadir}/$datafilename ${dbdir}/$treen
 
 
 ####### PLOTTING:
-bash ./pltDynLevel0-draw.sh
-bash ./pltSTRLevel0-draw.sh
+bash ./pltDynLevel0-draw.sh $2 $3 $4 $5
+bash ./pltSTRLevel0-draw.sh $2 $3 $4 $5
 
 
 
