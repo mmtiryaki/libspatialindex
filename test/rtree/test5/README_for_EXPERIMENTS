@@ -19,7 +19,7 @@ RTReeBulkLoad sample args:  data/data database/tree 92 0.99 1 10000 100
 		  qx,qy  ( extent, always fix. Because we already modify AQAR in the code)
 
 		----> At the end of this part, we will have:
-		  # Codes of Query Ave. Aspect Ratio (AQAR). 01,07,03,1,14,33,10
+		  # Codes of Query Ave. Aspect Ratio (AQAR). 01,03,07,1,14,33,10
 		  run-QueryGen       --> in "query" directory:We will have 7 querysets like "query100_u_0.5_0.5_0.1" "query100_u_0.5_0.5_0.3" ..."query100_u_0.5_0.5_1" .."query100_u_0.5_0.5_10"
 		  					     in "plt" directory:  pltquery0.1, ...pltquery10
 
@@ -28,13 +28,13 @@ RTReeBulkLoad sample args:  data/data database/tree 92 0.99 1 10000 100
 									     2 has STR-tree results for all 7 query sets.
 									     3 has AdpSTR-tree results for all 7 query sets.
 									 --> in "results" directory we will have "7 files for each Dyn-tree, STR-tree"
-									      and 6 output results fies for Adp-STR. ( ...0.1_0.1, 0.3_0.3, 0.7_0.7, 1.4_1.4, 3.3_3.3, 10_10 (1_1 yok cunku bu zaten ordinary STR)
+									      and 6 output results files for Adp-STR. ( ...0.1_0.1, 0.3_0.3, 0.7_0.7, 1.4_1.4, 3.3_3.3, 10_10 (1_1 yok cunku bu zaten ordinary STR)
 
 		  					         --> Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
 
 3-) If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with
 				paste 0 r1 r2 r3 > "rRES"   --> holds number of reads stats.
-				paste 0 t1 t2 t3 > "rRES"   --> Latency stats.
+				paste 0 t1 t2 t3 > "tRES"   --> Latency stats.
    command in VALIDATION section in run-QueryExecOnTrees.
 
 				--> in "PLT" directory: We will have FINAL perf. results in 4-column in rRES and tRES files.
@@ -45,6 +45,7 @@ RTReeBulkLoad sample args:  data/data database/tree 92 0.99 1 10000 100
    Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.
 
  4-) "$./loadAndRun/run-ForAllDs.sh -rQueryArea -aAQAR":  Q. Execution sens. to Data set size between 10K - to 100K.for a specific "Query-Area" and "AQAR".
+      		F.e.:  "$./loadAndRun/run-ForAllDs.sh -r0.0016 -a0.3"
      "$./loadAndRun/run-ForAllDs2.sh":  Önceden oluşturulan AllDSoutput vesini bar plot olarak çiziyor.
      /load ve /runQry  altındaki script'lerin biraraya gelmesi.
      10K-100K data generation. Ağaçların yüklenmesi ve belli bir ortalama alan ve AQAR değerli iş yüklerinin her indeks'de çalıştırılması.
@@ -73,7 +74,7 @@ run-1-DataGenAndLoad.sh -d50000
 "Figure 3" has been generated as the output of run-1-DataGenAndLoad.sh -d50000 script and
 "Figure 4 (a) and (c)" have been generated as the output of run-2-QueryGenAndExec.sh -d50000 script.
 
-"Figure 4 (b) bar-graph": Q. Execution sens. to Dta set size between 10K - to 100K.
+"Figure 4 (b) bar-graph": Q. Execution sens. to Data set size between 10K - to 100K.
 output of 4th section above.
 
 
