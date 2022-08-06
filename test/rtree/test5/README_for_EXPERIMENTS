@@ -1,5 +1,6 @@
-Sample execution parameters:
-RTRee_Bulk_Load:  data/data database/tree 92 0.99 1 10000 100
+Sample execution parameters:  (More explain in SAIL My Notes.txt
+RTReeLoad sample args:  data/data database/tree 92 intersection
+RTReeBulkLoad sample args:  data/data database/tree 92 0.99 1 10000 100
 
 1-)  "$./load/run-1-DataGenAndLoad -d10000":  We generate dataset & Load Dyn and STR
         ----> Parameters here:
@@ -7,7 +8,7 @@ RTRee_Bulk_Load:  data/data database/tree 92 0.99 1 10000 100
   		  dx, dy, d_dist, (extent of data regions and extent distr.)
   		  pS,bP for ext. sorting
         ----> At the end of this part, we will have:
-          in "/data" dir: like data10000_u_0_0_f
+          in "/data" dir: like data10000_u_0_0_f   (i.e. point set)
           in "/database/ds" directory (f.e. ds:10000) : [ D_tree10000_u_0_0_f_92.dat, ....idx, ...Loading-Stats ]  and same for all other 7 STR trees (one is normal STR, the other 6 is AdpSTR)
           in "/plt" directory: pltdata, pltDynLevel0, pltSTRLevel0_0.1, ....pltSTRLevel0_10
 		  Note that plt directory holds only 1 database's plot data i.e. the current database. (There is no prefix info, just pltdata, pltDynLevel0, ...)
