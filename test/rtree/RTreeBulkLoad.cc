@@ -5,7 +5,7 @@
  * Copyright (c) 2002, Marios Hadjieleftheriou
  *
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -265,8 +265,8 @@ int main(int argc, char** argv) {
 
 		// New strategy for traversing Leaves Only. I want to plot them w/ gnuplot.
 		// Bunu acarsan RTreBulkload Disk IO 2 katına çıkıyor. Cünkü burda bütün ağacı dolaşıyoruz.!!!
-		MyQueryStrategy3 qs;
-		tree->queryStrategy(qs);
+//		MyQueryStrategy3 qs;
+//		tree->queryStrategy(qs);
 
 		delete tree;
 		delete file;
