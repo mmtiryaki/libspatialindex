@@ -5,7 +5,7 @@
  * Copyright (c) 2002, Marios Hadjieleftheriou
  *
  * All rights reserved.
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
@@ -171,12 +171,18 @@ int main(int argc, char** argv)
 			cerr << "Unknown query type." << endl;
 			return -1;
 		}
-
-		ifstream fin(argv[1]);
+		uint32_t op;
+		string queries=argv[1];
+		ifstream fin(queries);
+		double x1,y1,x2,y2;
 		if (! fin)
 		{
-			cerr << "Cannot open query file " << argv[1] << "." << endl;
-			return -1;
+//			cerr << "Cannot open query file " << argv[1] << "." << endl;
+//			return -1;
+			std::stringstream ss(queries);
+			ss >> x1 >> y1 >> x2 >> y2;
+			op= QUERY;
+
 		}
 
 		string baseName = argv[2];
@@ -195,16 +201,19 @@ int main(int argc, char** argv)
 		size_t indexIO = 0;
 		size_t leafIO = 0;
 		id_type id;
-		uint32_t op;
-		double x1, x2, y1, y2;
+
 		double plow[2], phigh[2];
 
 		auto t1 = std::chrono::high_resolution_clock::now(); //utku
 
-		while (fin)
+//		while (fin)
+		while(true)
 		{
-			fin >> op >> id >> x1 >> y1 >> x2 >> y2;
-			if (! fin.good()) continue; // skip newlines, etc.
+			if (fin) {
+				fin >> op >> id >> x1 >> y1 >> x2 >> y2;
+				if (!fin.good())
+					continue; // skip newlines, etc.
+			}
 
 			if (op == QUERY)
 			{
@@ -241,21 +250,15 @@ int main(int argc, char** argv)
 				cerr << "This is not a query operation." << endl;
 			}
 
+
+
 			if ((count % 1000) == 0) cerr << count << endl;
 
 			count++;
+
+			if(!fin)
+				break;
 		}
-
-		MyQueryStrategy2 qs;
-		tree->queryStrategy(qs);
-
-		cerr << "Indexed space: " << qs.m_indexedSpace << endl;
-		cerr << "Operations: " << count << endl;
-		cerr << *tree;
-		cerr << "Index I/O: " << indexIO << endl;
-		cerr << "Leaf I/O: " << leafIO << endl;
-		cerr << "Buffer hits: " << file->getHits() << endl;
-
 		// utku:
 		auto t2 = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast < std::chrono::milliseconds
@@ -263,6 +266,15 @@ int main(int argc, char** argv)
 		std::cerr << "Time elapsed (msec) for query execution is : " << duration
 				<< std::endl;
 
+		cerr << *tree;
+		cerr << "Operations: " << count << endl;
+		cerr << "Index I/O: " << indexIO << endl;
+		cerr << "Leaf I/O: " << leafIO << endl;
+		cerr << "Buffer hits: " << file->getHits() << endl;
+		// following is for a more elaborate stats. If you execute this code, it will traverse all the tree, it will impair you calculations..
+//		MyQueryStrategy2 qs;
+//		tree->queryStrategy(qs);
+//		cerr << "Indexed space: " << qs.m_indexedSpace << endl;
 
 		delete tree;
 		delete file;

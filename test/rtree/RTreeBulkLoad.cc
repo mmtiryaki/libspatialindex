@@ -152,9 +152,9 @@ public:
 
 int main(int argc, char** argv) {
 	try {
-		if (! (argc == 5  || argc == 8) ) { // either 5 or 8 argument. Others are incorrect.
+		if (! (argc == 6  || argc == 9) ) { // either 5 or 9 argument. Others are incorrect.
 			std::cerr << "Usage       : " << argv[0]
-					<< " input_file tree_file capacity utilization r PS BP "  // pS: PageSize(#ofRecords/Block)   bP: Total # of Buffers
+					<< " input_file tree_file capacity utilization isPlotting r PS BP "  // pS: PageSize(#ofRecords/Block)   bP: Total # of Buffers
 					<< std::endl;
 			return -1;
 		}
@@ -163,15 +163,15 @@ int main(int argc, char** argv) {
 		std::string baseName = argv[2];
 		uint32_t capacity = atoi(argv[3]);
 		double fillFactor = atof(argv[4]);  // utilization
-
+		int isPlotting= atoi(argv[5]);
 
 		IStorageManager* diskfile = StorageManager::createNewDiskStorageManager(
-				baseName, 4096);
+				baseName, 32768);  // 4096 original value
 		// Create a new storage manager with the provided base name and a 4K page size.
 
 		StorageManager::IBuffer* file =
-				StorageManager::createNewRandomEvictionsBuffer(*diskfile, 10,
-						false);
+				StorageManager::createNewRandomEvictionsBuffer(*diskfile, 1000,
+						false);  // 10 orginal value
 		// applies a main memory random buffer on top of the persistent storage manager
 		// (LRU buffer, etc can be created the same way).
 
@@ -214,17 +214,18 @@ int main(int argc, char** argv) {
 		ps.setProperty("TreeVariant", var);
 
 
-		if (argc == 8) {
+
+		if (argc == 9) {
 			var.m_varType = Tools::VT_DOUBLE;
-			var.m_val.dblVal = atof(argv[5]);   // r=qx/qy;
+			var.m_val.dblVal = atof(argv[6]);   // r=qx/qy;
 			ps.setProperty("QueryAspectRatio", var);
 
 			var.m_varType = Tools::VT_ULONG;
-			var.m_val.ulVal = atol(argv[6]);  //pS
+			var.m_val.ulVal = atol(argv[7]);  //pS
 			ps.setProperty("ExternalSortBufferPageSize", var);
 
 			var.m_varType = Tools::VT_ULONG;
-			var.m_val.ulVal = atol(argv[7]);  // bP
+			var.m_val.ulVal = atol(argv[8]);  // bP
 			ps.setProperty("ExternalSortBufferTotalPages", var);
 		} else { // use default values
 			var.m_varType = Tools::VT_DOUBLE;
@@ -265,9 +266,10 @@ int main(int argc, char** argv) {
 
 		// New strategy for traversing Leaves Only. I want to plot them w/ gnuplot.
 		// Bunu acarsan RTreBulkload Disk IO 2 katına çıkıyor. Cünkü burda bütün ağacı dolaşıyoruz.!!!
-//		MyQueryStrategy3 qs;
-//		tree->queryStrategy(qs);
-
+		if (isPlotting) {
+			MyQueryStrategy3 qs;
+			tree->queryStrategy(qs);
+		}
 		delete tree;
 		delete file;
 		delete diskfile;

@@ -1,7 +1,13 @@
-Sample execution parameters:  (More explain in SAIL My Notes.txt
-RTReeLoad sample args:  data/data database/tree 92 intersection
-RTReeBulkLoad sample args:  data/data database/tree 92 0.99 1 10000 100
+Sample execution parameters in /dev/ branch:  (More explainations in SAIL My Notes.txt )
+-----------------------------------------------------------
+Generator sample args: 1000 u   0 u   0 0 f   0.1 0.1 f    generates Point data set to cout
+                        0   u   100 u 0 0 f   0.1 0.1 0.3  generates sample queries to cout
+RTReeLoad sample args:  data/data database/tree 92 intersection 1
+RTReeBulkLoad sample args:  data/data database/tree 92 0.99 1    1 10000 100
+RTreeQuery sample args:     query/queries database/STR-tree_30000 intersection
 
+Experiement Scripts:
+---------------------------
 1-)  "$./load/run-1-DataGenAndLoad -d10000":  We generate dataset & Load Dyn and STR
         ----> Parameters here:
   		  ds, data_loc_dist,

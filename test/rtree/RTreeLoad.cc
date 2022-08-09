@@ -97,9 +97,9 @@ int main(int argc, char** argv)
 {
 	try
 	{
-		if (argc != 5)
+		if (argc != 6)
 		{
-			std::cerr << "Usage: " << argv[0] << " input_file tree_file capacity query_type [intersection | 10NN | selfjoin | contains]." << std::endl;
+			std::cerr << "Usage: " << argv[0] << " input_file tree_file capacity query_type [intersection | 10NN | selfjoin | contains] isPlotting." << std::endl;
 			return -1;
 		}
 
@@ -248,9 +248,10 @@ int main(int argc, char** argv)
 
 		// New strategy for traversing Leaves Only. I want to plot them w/ gnuplot.
 		// Bunu acarsan RTreload Disk IO numTotalNodes kadar artıyor. Cünkü burda bütün ağacı dolaşıyoruz.!!!
-		MyQueryStrategy3 qs;
-		tree->queryStrategy(qs);
-
+		if (atoi(argv[5])) {
+			MyQueryStrategy3 qs;
+			tree->queryStrategy(qs);
+		}
 
 
 		delete tree;
