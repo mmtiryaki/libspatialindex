@@ -155,17 +155,17 @@ int main(int argc, char** argv)
 {
 	try
 	{
-		if (argc != 4)
+		if (argc != 5)
 		{
-			cerr << "Usage: " << argv[0] << " query_file tree_file query_type [intersection | 10NN | selfjoin]." << endl;
+			cerr << "Usage: " << argv[0] << " query_file tree_file cache_size query_type [intersection | 10NN | selfjoin]." << endl;
 			return -1;
 		}
 
 		uint32_t queryType = 0;
-
-		if (strcmp(argv[3], "intersection") == 0) queryType = 0;
-		else if (strcmp(argv[3], "10NN") == 0) queryType = 1;
-		else if (strcmp(argv[3], "selfjoin") == 0) queryType = 2;
+		uint32_t cache_size = atoi(argv[3]);  // max. number of idx-pages in the buffer
+		if (strcmp(argv[4], "intersection") == 0) queryType = 0;
+		else if (strcmp(argv[4], "10NN") == 0) queryType = 1;
+		else if (strcmp(argv[4], "selfjoin") == 0) queryType = 2;
 		else
 		{
 			cerr << "Unknown query type." << endl;
@@ -189,7 +189,7 @@ int main(int argc, char** argv)
 		IStorageManager* diskfile = StorageManager::loadDiskStorageManager(baseName);
 			// this will try to locate and open an already existing storage manager.
 
-		StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, 10, false);
+		StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, cache_size, false);  // original 10
 			// applies a main memory random buffer on top of the persistent storage manager
 			// (LRU buffer, etc can be created the same way).
 
