@@ -3,6 +3,8 @@
 # NOTE(UK): This file is to run a set of queries on R*tree and (Adp)-STR-tree AFTER generating dataset and query Workload.
 # In case you wish to generate only Query set and display it with gnuplot, then comment loading commands at the last 2 line.
 
+# Sample usage: ./run-2-QueryGenAndExec.sh -d10000    ( you should have the index exist.)
+
 # my source:
 export SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree/test5/runQry/"  # Here, do not use "~/git/...". It does not work!
 
@@ -17,11 +19,19 @@ do
     esac
 done
 
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied. Look at the usage"
+    exit
+fi
+
+export cache_size=10 # max. number of 4K-pages in mem
+
 # QUERY SET characteristics:
 export qs=100
 export query_loc_dist=u  # QUERY location distribution: uniform of gaussian, u or g
 # AQAR = qx/qy changes from [0.1, 0.3, 0.7, 1, 1.428, 3.33, 10 ]
-# QUERY AREA = Example:  Alan = 16e-4  ==> 0.04 * 0.04   
+# QUERY AREA = Example:  Alan = 16e-4  ==> 0.04 * 0.04
 export qx=0.08
 export qy=0.08
 
@@ -39,12 +49,17 @@ export dy=0
 #export dy=0.01
 export d_dist=f     # DATA EXTENT dist.
 
-export capacity=92
+
+# system params:
+export page_size=1  # number of 4K
+# Common usage ise page size 4K. (92 is for 4K.) If you change page size, you should increase capacity.
+export capacity=$(($page_size*92))
 export fillfactor=0.999   # used in only bulk loading
+
 export treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}
-      
-      
-      
+
+
+
 
 # construct related directories s.a data, database/ds, plt inside test-build area in eclipse WS.
 mkdir -p  $HOME/eclipse-workspace/test-build/query  # -p flag: mk dir only if dir does not exist.

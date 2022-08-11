@@ -10,7 +10,7 @@ echo Load R*-Tree $treename
 # > r  : redirect std output to file r with replacing r.  >> : redirect and append to file r.
 #time ../../test-rtree-RTreeLoad $datafile $treename $capacity intersection > r 2>&1    # intersection is query type. But we are not sending any query!!
 
-time ${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $capacity intersection 1 2>r 1>${pltdir}/pltDynLevel0     #redirect cerr to 'r' AND redirect cout to plt...file
+time ${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $page_size $cache_size $capacity intersection 1 2>r 1>${pltdir}/pltDynLevel0     #redirect cerr to 'r' AND redirect cout to plt...file
 awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /TOTAL/ ||
 		  $1 ~ /Buffer/ ||
@@ -41,7 +41,7 @@ for i in "${aqarlist[@]}"; do    # note that aqar=1 is the ordinary STR. Others 
 		echo Load Adp-STR R-Tree $treename;
 	fi;
 
-	time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $capacity $fillfactor 1 ${aqar} $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_${aqar};  #redirect cerr to 'r' AND redirect cout to plt...file
+	time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $page_size $cache_size $capacity $fillfactor 1 ${aqar} $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_${aqar};  #redirect cerr to 'r' AND redirect cout to plt...file
 	awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /TOTAL/ ||
 		  $1 ~ /Buffer/ ||

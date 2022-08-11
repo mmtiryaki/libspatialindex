@@ -2,6 +2,7 @@
 # default shell is already bash
 
 # NOTE:(UK) This file generates 10 data sets and load it into R*tree and STR-tree and Adp-STR-tree.
+
 # Sample usage: ./run-ForAllDs.sh -r0.0016 -a0.3
 
 
@@ -20,6 +21,24 @@ do
     esac
 done
 
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied. Look at the usage"
+    exit
+fi
+
+# system params:
+export page_size=1  # number of 4K
+# Common usage ise page size 4K. (92 is for 4K.) If you change page size, you should increase capacity.
+capacity=$(($page_size*92))
+fillfactor=0.999   # used in only bulk loading
+cache_size=10 # max. number of 4K-pages in mem
+
+# external sorting parameters:
+pS=10000  # Page size (RPB). Used in ext-sort
+bP=100    # buffer size (num of buffers). Used in ext-sort
+
+
 # data set:
 data_loc_dist=u  # data location distribution: uniform or gaussian, u or g
 
@@ -30,12 +49,9 @@ dx=0
 dy=0
 d_dist=f    # DATA EXTENT distribution: f or u: fixed size or uniformly distr.
 
-# external sorting parameters:
-pS=10000  # Page size (RPB). Used in ext-sort
-bP=100    # buffer size (num of buffers). Used in ext-sort
 
-capacity=92
-fillfactor=0.999   # used in only bulk loading
+
+
 treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}
 
 
@@ -74,7 +90,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 	# Load R*-tree
 	treename=D_${treeprefix}
 	echo Load R*-Tree $treename;
-	time ${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $capacity intersection 1 2>r 1>${pltdir}/pltDynLevel0;     #redirect cerr to 'r' AND redirect cout to plt...file
+	time ${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $page_size $cache_size $capacity intersection 1 2>r 1>${pltdir}/pltDynLevel0;     #redirect cerr to 'r' AND redirect cout to plt...file
 	awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /TOTAL/ ||
 		  $1 ~ /Buffer/ ||
@@ -94,7 +110,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 	# Load STR-tree
 	treename=S_${treeprefix}_1;
 	echo Load STR R-Tree $treename;
-	time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $capacity $fillfactor 1 1 $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_1;  #redirect cerr to 'r' AND redirect cout to plt...file
+	time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $page_size $cache_size $capacity $fillfactor 1 1 $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_1;  #redirect cerr to 'r' AND redirect cout to plt...file
 	awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /TOTAL/ ||
 		  $1 ~ /Buffer/ ||
@@ -114,7 +130,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 	# Load Adp-STR-tree
 	treename=S_${treeprefix}_${aqar};
 	echo Load STR R-Tree $treename;
-	time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $capacity $fillfactor 1 ${aqar} $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_${aqar};  #redirect cerr to 'r' AND redirect cout to plt...file
+	time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $page_size $cache_size $capacity $fillfactor 1 ${aqar} $pS $bP 2> r 1>${pltdir}/pltSTRLevel0_${aqar};  #redirect cerr to 'r' AND redirect cout to plt...file
 	awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /TOTAL/ ||
 		  $1 ~ /Buffer/ ||
@@ -169,7 +185,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 
 	treename=D_${treeprefix};
 	echo Querying $treename with ${queryfile}_$aqar;
-	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
+	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename $cache_size intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
 	#awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;
 	t1=$(awk '{if ($1 ~ /Time/) print $9}'< r);
 	rm -rf r;
@@ -177,7 +193,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 
 	treename=S_${treeprefix}_1;
 	echo Querying $treename with ${queryfile}_$aqar;
-	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
+	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename $cache_size intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
 	#awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;
 	t2=$(awk '{if ($1 ~ /Time/) print $9}'< r);
 	rm -rf r;
@@ -186,7 +202,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 
 	treename=S_${treeprefix}_${aqar};
 	echo Querying $treename with ${queryfile}_$aqar;
-	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
+	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename $cache_size intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
 	#awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;
 	t3=$(awk '{if ($1 ~ /Time/) print $9}'< r);
 	rm -rf r;

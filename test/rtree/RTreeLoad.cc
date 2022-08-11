@@ -97,18 +97,20 @@ int main(int argc, char** argv)
 {
 	try
 	{
-		if (argc != 6)
+		if (argc != 8)
 		{
-			std::cerr << "Usage: " << argv[0] << " input_file tree_file capacity query_type [intersection | 10NN | selfjoin | contains] isPlotting." << std::endl;
+			std::cerr << "Usage: " << argv[0] << " input_file tree_file idx_pageSize  cache_size capacity query_type [intersection | 10NN | selfjoin | contains] isPlotting." << std::endl;
 			return -1;
 		}
 
-		uint32_t queryType = 0;
+		uint32_t idx_pageSize = atoi(argv[3]);  // i.e. idx node size. = number of system pages in the index node. (sys-unit-page=4K (assume system page size is 4K))
+		uint32_t cache_size = atoi(argv[4]);  // max. number of idx-pages in the buffer
 
-		if (strcmp(argv[4], "intersection") == 0) queryType = 0;
-		else if (strcmp(argv[4], "10NN") == 0) queryType = 1;
-		else if (strcmp(argv[4], "selfjoin") == 0) queryType = 2;
-		else if (strcmp(argv[4], "contains") == 0) queryType = 3;
+		uint32_t queryType = 0;
+		if (strcmp(argv[6], "intersection") == 0) queryType = 0;
+		else if (strcmp(argv[6], "10NN") == 0) queryType = 1;
+		else if (strcmp(argv[6], "selfjoin") == 0) queryType = 2;
+		else if (strcmp(argv[6], "contains") == 0) queryType = 3;
 		else
 		{
 			std::cerr << "Unknown query type." << std::endl;
@@ -135,7 +137,7 @@ int main(int argc, char** argv)
 		id_type indexIdentifier;
 
 		auto t1 = std::chrono::high_resolution_clock::now(); //utku
-		ISpatialIndex* tree = RTree::createNewRTree(*file, 0.7, atoi(argv[3]), atoi(argv[3]), 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
+		ISpatialIndex* tree = RTree::createNewRTree(*file, 0.7, atoi(argv[5]), atoi(argv[5]), 2, SpatialIndex::RTree::RV_RSTAR, indexIdentifier);
 
 		size_t count = 0;
 		id_type id;
@@ -248,7 +250,7 @@ int main(int argc, char** argv)
 
 		// New strategy for traversing Leaves Only. I want to plot them w/ gnuplot.
 		// Bunu acarsan RTreload Disk IO numTotalNodes kadar artıyor. Cünkü burda bütün ağacı dolaşıyoruz.!!!
-		if (atoi(argv[5])) {
+		if (atoi(argv[7])) {
 			MyQueryStrategy3 qs;
 			tree->queryStrategy(qs);
 		}

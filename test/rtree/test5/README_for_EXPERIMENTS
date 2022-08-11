@@ -2,12 +2,15 @@ Sample execution parameters in /dev/ branch:  (More explainations in SAIL My Not
 -----------------------------------------------------------
 Generator sample args: 1000 u   0 u   0 0 f   0.1 0.1 f    generates Point data set to cout
                         0   u   100 u 0 0 f   0.1 0.1 0.3  generates sample queries to cout
-RTReeLoad sample args:  data/data database/tree 92 intersection 1
-RTReeBulkLoad sample args:  data/data database/tree 92 0.99 1    1 10000 100
-RTreeQuery sample args:     query/queries database/STR-tree_30000 intersection
+RTReeLoad sample args:  data/data database/tree 1 10 92 intersection 1
+RTReeBulkLoad sample args:  data/data database/tree 1 10 92 0.99 1    1 10000 100
+RTreeQuery sample args:     query/queries database/STR-tree_30000 10 intersection
 
 Experiement Scripts:
 ---------------------------
+
+Run the ("run-1 ...." and "run-2" scripts...) ordered as below!!
+
 1-)  "$./load/run-1-DataGenAndLoad -d10000":  We generate dataset & Load Dyn and STR
         ----> Parameters here:
   		  ds, data_loc_dist,
@@ -38,10 +41,10 @@ Experiement Scripts:
 
 		  					         --> Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
 
-3-) If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with
+      If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with
 				paste 0 r1 r2 r3 > "rRES"   --> holds number of reads stats.
 				paste 0 t1 t2 t3 > "tRES"   --> Latency stats.
-   command in VALIDATION section in run-QueryExecOnTrees.
+       command in VALIDATION section in run-QueryExecOnTrees.
 
 				--> in "PLT" directory: We will have FINAL perf. results in 4-column in rRES and tRES files.
 
@@ -50,7 +53,7 @@ Experiement Scripts:
    Ancak farklı zamanlarda çalıştırdığımızda tampon havuz durumuna göre elbette latency gecikmesi farklı olabiliyor.
    Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.
 
- 4-) "$./loadAndRun/run-ForAllDs.sh -rQueryArea -aAQAR":  Q. Execution sens. to Data set size between 10K - to 100K.for a specific "Query-Area" and "AQAR".
+ 3-) "$./loadAndRun/run-ForAllDs.sh -rQueryArea -aAQAR":  Q. Execution sens. to Data set size between 10K - to 100K.for a specific "Query-Area" and "AQAR".
       		F.e.:  "$./loadAndRun/run-ForAllDs.sh -r0.0016 -a0.3"
      "$./loadAndRun/run-ForAllDs2.sh":  Önceden oluşturulan AllDSoutput vesini bar plot olarak çiziyor.
      /load ve /runQry  altındaki script'lerin biraraya gelmesi.
