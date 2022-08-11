@@ -126,9 +126,9 @@ int main(int argc, char** argv)
 
 		// Create a new storage manager with the provided base name and a 4K page size.
 		std::string baseName = argv[2];
-		IStorageManager* diskfile = StorageManager::createNewDiskStorageManager(baseName, 4096);
+		IStorageManager* diskfile = StorageManager::createNewDiskStorageManager(baseName, idx_pageSize*4096);  // original 4096
 
-		StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, 10, false);
+		StorageManager::IBuffer* file = StorageManager::createNewRandomEvictionsBuffer(*diskfile, cache_size, false);  // original 10
 			// applies a main memory random buffer on top of the persistent storage manager
 			// (LRU buffer, etc can be created the same way).
 
