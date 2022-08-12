@@ -493,6 +493,8 @@ void DiskStorageManager::storeByteArray(id_type& page, const uint32_t len, const
 			m_emptyPages.insert(oldEntry->m_pages[cNext]);
 			++cNext;
 		}
+		if(e->m_pages.size() >1)
+			std::cerr << " !!! High capacity !!! Note that You exceed the system page size" << std::endl;
 
 		m_pageIndex.insert(std::pair<id_type, Entry*>(page, e));
 		delete oldEntry;
@@ -514,3 +516,5 @@ void DiskStorageManager::deleteByteArray(const id_type page)
 	delete (*it).second;
 	m_pageIndex.erase(it);
 }
+
+
