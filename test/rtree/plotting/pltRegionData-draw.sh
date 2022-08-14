@@ -11,7 +11,7 @@ do
 done
 
 gnuplot -persist <<-EOFMarker
-	set title "Data Set with $ds objects in Unit Area "  
+	set title "$ds objects in Unit Area "  
 	set xlabel "x"
 	set ylabel "y"
 	unset logscale x
@@ -21,7 +21,7 @@ gnuplot -persist <<-EOFMarker
 	set grid
 	set size square   
 	set style line 1 lc rgb 'black' pt 7 pointsize 0.3   # unset style line 1
-	plot "~/eclipse-workspace/test-build/plt/pltdata" using 1:2 w p title "point" ls 1  #-->> POINT data set
+	plot "~/eclipse-workspace/test-build/plt/pltdata" using 1:2 w l title "region" ls 2  
 EOFMarker
 
 #plot "pltdata" using 1:2 w l title "region" ls 2  #-->> Use this for REGION data set  

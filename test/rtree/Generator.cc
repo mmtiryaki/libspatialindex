@@ -60,214 +60,231 @@ public:
 
 int main(int argc, char** argv)
 {
-	if (argc != 11)
+	if (argc != 7)
 	{
-		std::cerr << "Usage: " << argv[0] << " ds loc_distr qs loc_distr d_dx d_dy d_distr. q_dx q_dy AQAR." << std::endl;
+//		std::cerr << "Usage: " << argv[0] << " ds loc_distr qs loc_distr d_dx d_dy dxdy_distr. q_dx q_dy AQAR." << std::endl;
+		std::cerr << "Usage: " << argv[0] <<
+		" 1-)data?query[data|query]   2-)ds(qs)[numeric]   3-)loc_distr[u|g]    4-)d(q)_dx[double]     5-)d(q)_dy[double]     6-)d(q)_dxdy_distr.[f|u|double] " << std::endl;
+		//                                 set-size                             max-dx-sized-region            "                   dx_dy-distr | AQAR value
+		// d(q)_dxdy_distr.  : for data we mention "fixed-sized" vs. "uniformly-dist-sized regions"
+		//                     for query we mention AQAR
 		return -1;
 	}
 
-	size_t numberOfObjects = atol(argv[1]);
-	char data_loc_dist=*argv[2];
+	char *dataOrQuery=argv[1];
 
-	size_t numberOfQueries = atol(argv[3]);
-	char query_loc_dist=*argv[4];
+	size_t numberOfObjects = atol(argv[2]);
+	char loc_dist=*argv[3];
 
-	double d_dx = atof(argv[5]);
-	double d_dy = atof(argv[6]);
-	char d_dist = *argv[7];
+//	size_t numberOfQueries = atol(argv[3]);
+//	char query_loc_dist=*argv[4];
 
-	double q_dx = atof(argv[8]);
-	double q_dy = atof(argv[9]);
-	double AQAR=atof(argv[10]);
+//	double d_dx = atof(argv[5]);
+//	double d_dy = atof(argv[6]);
+//	char d_dist = *argv[7];
+
+//	double q_dx = atof(argv[8]);
+//	double q_dy = atof(argv[9]);
+//	double AQAR=atof(argv[10]);
+
+	// extent sizes
+	double dx = atof(argv[4]);
+	double dy = atof(argv[5]);
+//	char dxdy_dist = *argv[6];
+
 
 	Tools::Random rnd;
 
+	if(std::string(dataOrQuery) == "data"){
+		char dxdy_dist = *argv[6];
+		switch (loc_dist) {
+		case 'u': // uniformly distributed locations.
+			for (size_t i = 0; i < numberOfObjects; i++) {
+				double x, y;
+				x = rnd.nextUniformDouble();
+				y = rnd.nextUniformDouble();
 
-	switch (data_loc_dist) {
-	case 'u': // uniformly distributed locations.
-		for (size_t i = 0; i < numberOfObjects; i++) {
-			double x, y;
-			x = rnd.nextUniformDouble();
-			y = rnd.nextUniformDouble();
-
-			double dx;
-			double dy;
-			switch (d_dist) {
-			case 'f':  // fix size
-				dx = d_dx;
-				dy = d_dy;
-				break;
-			case 'u':   // uniform dist.
-				dx = rnd.nextUniformDouble(0.001 * d_dx, d_dx);
-				dy = rnd.nextUniformDouble(0.001 * d_dy, d_dy);
-				break;
-			}
-			Region r = Region(x, y, x + dx, y + dy);
-			std::cout << INSERT << " " << i << " " << r.m_xmin << " "
-					<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
-					<< std::endl;
-		}
-		break;
-	case 'g': //// gaussian distributed data locations.
-		std::random_device rdx { };
-		std::random_device rdy { };
-		std::mt19937 genx { rdx() };
-		std::mt19937 geny { rdy() };
-
-		// values near the mean are the most likely
-		// standard deviation affects the dispersion of generated values from the mean
-		std::normal_distribution<> d1 { 0.25, 0.1 };
-		for (size_t i = 0; i < (numberOfObjects * 4) / 10; i++) {
-			double x, y;
-			x = d1(genx);
-			y = d1(geny);
-
-			double dx;
-			double dy;
-			switch (d_dist) {
-			case 'f':  // fix size
-				dx = d_dx;
-				dy = d_dy;
-				break;
-			case 'u':   // uniform dist.
-				dx = rnd.nextUniformDouble(0.001 * d_dx, d_dx);
-				dy = rnd.nextUniformDouble(0.001 * d_dy, d_dy);
-				break;
-			}
-			Region r = Region(x, y, x + dx, y + dy);
-
-			std::cout << INSERT << " " << i << " " << r.m_xmin << " "
-					<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
-					<< std::endl;
-		}
-		std::normal_distribution<> d2 { 0.75, 0.1 };
-		for (size_t i = (numberOfObjects * 4) / 10;
-				i < (numberOfObjects * 8) / 10; i++) {
-			double x, y;
-			x = d2(genx);
-			y = d2(geny);
-
-			double dx;
-			double dy;
-			switch (d_dist) {
-			case 'f':  // fix size
-				dx = d_dx;
-				dy = d_dy;
-				break;
-			case 'u':   // uniform dist.
-				dx = rnd.nextUniformDouble(0.001 * d_dx, d_dx);
-				dy = rnd.nextUniformDouble(0.001 * d_dy, d_dy);
-				break;
-			}
-
-			Region r = Region(x, y, x + dx, y + dy);
-
-			std::cout << INSERT << " " << i << " " << r.m_xmin << " "
-					<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
-					<< std::endl;
-		}
-		for (size_t i = (numberOfObjects * 8) / 10; i < numberOfObjects; i++) {
-					double x, y;
-					x = rnd.nextUniformDouble();
-					y = rnd.nextUniformDouble();
-
-					double dx;
-					double dy;
-					switch (d_dist) {
-					case 'f':  // fix size
-						dx = d_dx;
-						dy = d_dy;
-						break;
-					case 'u':   // uniform dist.
-						dx = rnd.nextUniformDouble(0.001 * d_dx, d_dx);
-						dy = rnd.nextUniformDouble(0.001 * d_dy, d_dy);
-						break;
-					}
-					Region r = Region(x, y, x + dx, y + dy);
-
-					std::cout << INSERT << " " << i << " " << r.m_xmin << " "
-							<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
-							<< std::endl;
+				double dx2;
+				double dy2;
+				switch (dxdy_dist) {  //extent
+				case 'f':  // fix size
+					dx2 = dx;
+					dy2 = dy;
+					break;
+				case 'u':   // uniform dist. sized regions
+					dx2 = rnd.nextUniformDouble(0.001 * dx, dx);
+					dy2 = rnd.nextUniformDouble(0.001 * dy, dy);
+					break;
 				}
-		break;
+				Region r = Region(x, y, x + dx2, y + dy2);
+				std::cout << INSERT << " " << i << " " << r.m_xmin << " "
+						<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
+						<< std::endl;
+			}
+			break;
+		case 'g': //// gaussian distributed data locations.
+			std::random_device rdx { };
+			std::random_device rdy { };
+			std::mt19937 genx { rdx() };
+			std::mt19937 geny { rdy() };
+
+			// values near the mean are the most likely
+			// standard deviation affects the dispersion of generated values from the mean
+			std::normal_distribution<> d1 { 0.25, 0.1 };
+			for (size_t i = 0; i < (numberOfObjects * 4) / 10; i++) {
+				double x, y;
+				x = d1(genx);
+				y = d1(geny);
+
+				double dx2;
+				double dy2;
+				switch (dxdy_dist) { //extent
+				case 'f':  // fix size
+					dx2 = dx;
+					dy2 = dy;
+					break;
+				case 'u':   // uniform dist.-sized regions
+					dx2 = rnd.nextUniformDouble(0.001 * dx, dx);
+					dy2 = rnd.nextUniformDouble(0.001 * dy, dy);
+					break;
+				}
+				Region r = Region(x, y, x + dx2, y + dy2);
+
+				std::cout << INSERT << " " << i << " " << r.m_xmin << " "
+						<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
+						<< std::endl;
+			}
+
+			std::normal_distribution<> d2 { 0.75, 0.1 };
+			for (size_t i = (numberOfObjects * 4) / 10;
+					i < (numberOfObjects * 8) / 10; i++) {
+				double x, y;
+				x = d2(genx);
+				y = d2(geny);
+
+				double dx2;
+				double dy2;
+				switch (dxdy_dist) {
+				case 'f':  // fix size
+					dx2 = dx;
+					dy2 = dy;
+					break;
+				case 'u':   // uniform dist.
+					dx2 = rnd.nextUniformDouble(0.001 * dx, dx);
+					dy2 = rnd.nextUniformDouble(0.001 * dy, dy);
+					break;
+				}
+
+				Region r = Region(x, y, x + dx2, y + dy2);
+
+				std::cout << INSERT << " " << i << " " << r.m_xmin << " "
+						<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
+						<< std::endl;
+			}
+			for (size_t i = (numberOfObjects * 8) / 10; i < numberOfObjects; i++) {
+						double x, y;
+						x = rnd.nextUniformDouble();
+						y = rnd.nextUniformDouble();
+
+						double dx2;
+						double dy2;
+						switch (dxdy_dist) {
+						case 'f':  // fix size
+							dx2 = dx;
+							dy2 = dy;
+							break;
+						case 'u':   // uniform dist.
+							dx2 = rnd.nextUniformDouble(0.001 * dx, dx);
+							dy2 = rnd.nextUniformDouble(0.001 * dy, dy);
+							break;
+						}
+						Region r = Region(x, y, x + dx2, y + dy2);
+
+						std::cout << INSERT << " " << i << " " << r.m_xmin << " "
+								<< r.m_ymin << " " << r.m_xmax << " " << r.m_ymax
+								<< std::endl;
+					}
+			break;
+		}
 	}
+	else{
+		double AQAR=atof(argv[6]);
+		assert(dx==dy);  // Assure that dx=dy to make AQAR meaningful.
+		switch (loc_dist) {
+		case 'u': // uniformly distributed locations.
+			for (size_t i = 0; i < numberOfObjects; i++) {
+				double x = rnd.nextUniformDouble();
+				double y = rnd.nextUniformDouble();
+				double qx;
+				double qy;
+				double p = sqrt(1 / AQAR);  // update qx,qy based on AQAR
+				qx = dx / p;
+				qy = dy * p;
 
-	switch (query_loc_dist) {
-	case 'u': // uniformly distributed locations.
-		for (size_t i = 0; i < numberOfQueries; i++) {
-			double x = rnd.nextUniformDouble();
-			double y = rnd.nextUniformDouble();
-			double qx;
-			double qy;
-			double p = sqrt(1 / AQAR);  // update qx,qx based on AQAR
-			qx = q_dx / p;
-			qy = q_dy * p;
+				//			std::cout << QUERY << " 9999999 " << stx << " " << sty << " "
+				//					<< (stx + 0.01) << " " << (sty + 0.01) << std::endl;
+				std::cout << QUERY << " 9999999 " << x << " " << y << " "
+						<< (x + qx) << " " << (y + qy) << std::endl;
+			}
+			break;
+		case 'g':			//// gaussian distributed Query locations.
+			std::random_device rdx { };
+			std::random_device rdy { };
+			std::mt19937 genx { rdx() };
+			std::mt19937 geny { rdy() };
 
-			//			std::cout << QUERY << " 9999999 " << stx << " " << sty << " "
-			//					<< (stx + 0.01) << " " << (sty + 0.01) << std::endl;
-			std::cout << QUERY << " 9999999 " << x << " " << y << " "
-					<< (x + qx) << " " << (y + qy) << std::endl;
+			// values near the mean are the most likely
+			// standard deviation affects the dispersion of generated values from the mean
+			std::normal_distribution<> d1x { 0.25, 0.1 };
+			std::normal_distribution<> d1y { 0.75, 0.1 };
+			for (size_t i = 0; i < (numberOfObjects * 4) / 10; i++) {
+				double x, y;
+				x = d1x(genx);
+				y = d1y(geny);
+
+				double qx;
+				double qy;
+				double p = sqrt(1 / AQAR);
+				qx = dx / p;
+				qy = dy * p;
+
+				std::cout << QUERY << " 9999999 " << x << " " << y << " "
+						<< (x + qx) << " " << (y + qy) << std::endl;
+			}
+			std::normal_distribution<> d2x { 0.75, 0.1 };
+			std::normal_distribution<> d2y { 0.25, 0.1 };
+			for (size_t i = (numberOfObjects * 4) / 10;
+					i < (numberOfObjects * 8) / 10; i++) {
+				double x, y;
+				x = d2x(genx);
+				y = d2y(geny);
+
+				double qx;
+				double qy;
+				double p = sqrt(1 / AQAR);
+				qx = dx / p;
+				qy = dy * p;
+
+				std::cout << QUERY << " 9999999 " << x << " " << y << " "
+						<< (x + qx) << " " << (y + qy) << std::endl;
+			}
+			for (size_t i = (numberOfObjects * 8) / 10; i < numberOfObjects; i++) {
+				double x, y;
+				x = rnd.nextUniformDouble();
+				y = rnd.nextUniformDouble();
+
+				double qx;
+				double qy;
+				double p = sqrt(1 / AQAR);
+				qx = dx / p;
+				qy = dy * p;
+
+				std::cout << QUERY << " 9999999 " << x << " " << y << " "
+						<< (x + qx) << " " << (y + qy) << std::endl;
+			}
+			break;
 		}
-		break;
-	case 'g':			//// gaussian distributed Query locations.
-		std::random_device rdx { };
-		std::random_device rdy { };
-		std::mt19937 genx { rdx() };
-		std::mt19937 geny { rdy() };
-
-		// values near the mean are the most likely
-		// standard deviation affects the dispersion of generated values from the mean
-		std::normal_distribution<> d1x { 0.25, 0.1 };
-		std::normal_distribution<> d1y { 0.75, 0.1 };
-		for (size_t i = 0; i < (numberOfQueries * 4) / 10; i++) {
-			double x, y;
-			x = d1x(genx);
-			y = d1y(geny);
-
-			double qx;
-			double qy;
-			double p = sqrt(1 / AQAR);
-			qx = q_dx / p;
-			qy = q_dy * p;
-
-			std::cout << QUERY << " 9999999 " << x << " " << y << " "
-					<< (x + qx) << " " << (y + qy) << std::endl;
-		}
-		std::normal_distribution<> d2x { 0.75, 0.1 };
-		std::normal_distribution<> d2y { 0.25, 0.1 };
-		for (size_t i = (numberOfQueries * 4) / 10;
-				i < (numberOfQueries * 8) / 10; i++) {
-			double x, y;
-			x = d2x(genx);
-			y = d2y(geny);
-
-			double qx;
-			double qy;
-			double p = sqrt(1 / AQAR);
-			qx = q_dx / p;
-			qy = q_dy * p;
-
-			std::cout << QUERY << " 9999999 " << x << " " << y << " "
-					<< (x + qx) << " " << (y + qy) << std::endl;
-		}
-		for (size_t i = (numberOfQueries * 8) / 10; i < numberOfQueries; i++) {
-			double x, y;
-			x = rnd.nextUniformDouble();
-			y = rnd.nextUniformDouble();
-
-			double qx;
-			double qy;
-			double p = sqrt(1 / AQAR);
-			qx = q_dx / p;
-			qy = q_dy * p;
-
-			std::cout << QUERY << " 9999999 " << x << " " << y << " "
-					<< (x + qx) << " " << (y + qy) << std::endl;
-		}
-		break;
 	}
-
-
 //	size_t A = static_cast<size_t>(std::floor(static_cast<double>(numberOfObjects) * 0.05));
 //
 //	for (size_t T = 1; T <= simulationLength; T++)
