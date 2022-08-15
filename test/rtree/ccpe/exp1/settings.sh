@@ -1,13 +1,17 @@
 #!/bin/bash
 # default shell is already bash
 
-# NOTE:(UK) This file generates 2 types of objetcs::
-#     --- data set and load it into R*tree and STR-tree and PLOT data set and Leaf MBRs.
-#     --- quey set with a specific AQAR values.
+# NOTE:(UK) This file
+#     --- generate data set and load it into R*tree and STR-tree and Adp-STR-tree
+#	  --- PLOT data set and Leaf MBRs.
+#     --- run quey sets with different AQAR values on
+#			--- R*
+#			--- classic STR and
+#			--- Adp-STR-tree having the same aqar with query set. The goal is to see the adv of adaptive STR tree.
 
 # Sample usage:
-#       --- run-1-DataGenAndLoad.sh -tdata  -d100 -lu -x0.04 -y0.04 -ef   -c5
-#		--- run-1-DataGenAndLoad.sh -tquery -d100 -lu -x0.04 -y0.04    
+#     --- ./settings.sh  -d10000  -lu -x0 -y0 -ef -c5  100 u  0.02  0.02
+#														qs ql  qx    qy
 
 # my source:
 export SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree"  # Here, do not use "~/git/...". It does not work!
@@ -28,14 +32,13 @@ export bP=100    # buffer size (num of buffers). Used in ext-sort
 
 
 # get data size from console:
-while getopts 't:d:l:x:y:e:c:' flag;   # you may add extra s.a. flags d:x:a:
+while getopts 'd:l:x:y:e:c:' flag;   #
 do
     case "${flag}" in
-        t) obj_type=${OPTARG};;   # data or query
-        d) ds=${OPTARG};;         # number of objects
-        l) loc_dist=${OPTARG};;   # obj location distribution: (u)niform or (g)aussian
-        x) dx=${OPTARG};;         # obj x-size
-        y) dy=${OPTARG};;         # obj y-size
+        d) ds=${OPTARG};;         # number of data
+        l) loc_dist=${OPTARG};;   # data location distribution: (u)niform or (g)aussian
+        x) dx=${OPTARG};;         # data x-size
+        y) dy=${OPTARG};;         # data y-size
         e) dxdy_dist=${OPTARG};;  # fix of uniformly dist. b/w [ 0.001dx and dx ]
         c) capacity=$(($page_size*${OPTARG}));;   # has meaning for obj-type=data. capacity of R-tree
     esac
@@ -49,30 +52,15 @@ if [ $# -eq 0 ]
     exit
 fi
 
-if [[ $obj_type == 'data' ]] && [[ $capacity -lt 4 ]];
-  then
-    echo $capacity
-    echo "No valid capacity supplied. See the usage."
-    exit
-fi
-
-if [[ $obj_type == 'data' ]] && ([[ $dxdy_dist != 'f' ]] && [[ $dxdy_dist != 'u' ]]);
-  then
-    echo "No valid extent-dist supplied. See the usage."
-    exit
-fi
-
-if [[ $obj_type == 'query' ]] && ([[ $dxdy_dist ]]);
-  then
-    echo "Do not enter AQAR. All AQARs will be generated!"
-    exit
-fi
+export qs=$7   # query set size
+export ql=$8   # query location distr. (u)niform or (g)aussian
+export qx=$9   # query x-size
+export qy=${10}   # query y-size
 
 
-
-# obj set:
-export obj_type # data vs query
-export ds   # obj set size
+# data set:
+#export obj_type # data vs query
+export ds   # data set size
 export loc_dist  # data location distribution: uniform or gaussian, u or g
 
 # data extent: (point or region)
@@ -87,24 +75,24 @@ export dxdy_dist #=f    # DATA EXTENT distribution: if obj-type= data ==> f or u
 export treeprefix=tree${ds}_${loc_dist}_${dx}_${dy}_${dxdy_dist}_${capacity}
 
 
-# construct related directories s.a data, database/ds, plt inside test-build area in eclipse WS.
+# construct related directories s.a data, database/ds, query/ plt/ and results/ inside test-build area in eclipse WS.
 mkdir -p  $HOME/eclipse-workspace/test-build/data  # -p flag: mk dir only if dir does not exist.
 export datafile=$HOME/eclipse-workspace/test-build/data/data${ds}_${loc_dist}_${dx}_${dy}_${dxdy_dist}
 
+mkdir -p $HOME/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
+export dbdir=$HOME/eclipse-workspace/test-build/database/${ds}
+
 mkdir -p  $HOME/eclipse-workspace/test-build/query  # -p flag: mk dir only if dir does not exist.
-export queryfile=$HOME/eclipse-workspace/test-build/query/query${ds}_${loc_dist}_${dx}_${dy}
+export queryfile=$HOME/eclipse-workspace/test-build/query/query${qs}_${ql}_${qx}_${qy}  # This is prefix of queryfile. We will add aqar-value as suffix later.
 
 
 mkdir -p $HOME/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir does not exist.
 export pltdir=$HOME/eclipse-workspace/test-build/plt
 
-if [[ $obj_type == 'data' ]];
-then
-	mkdir -p $HOME/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
-	export dbdir=$HOME/eclipse-workspace/test-build/database/${ds}
-fi
+mkdir -p $HOME/eclipse-workspace/test-build/results
+export resultsdir=$HOME/eclipse-workspace/test-build/results
 
-./run.sh
+./gen_data_query_AND_load_indexes.sh
 
 
 

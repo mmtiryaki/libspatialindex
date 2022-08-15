@@ -1,51 +1,58 @@
 Sample execution parameters in /dev/ branch:  (More explainations in SAIL My Notes.txt )
 -----------------------------------------------------------
-Generator sample args: 1000 u   0 u   0 0 f   0.1 0.1 f    generates Point data set to cout
-                        0   u   100 u 0 0 f   0.1 0.1 0.3  generates sample queries to cout
-RTReeLoad sample args:  data/data database/tree 1 10 92 intersection 1
-RTReeBulkLoad sample args:  data/data database/tree 1 10 92 0.99 1    1 10000 100
-RTreeQuery sample args:     query/queries database/STR-tree_30000 10 intersection
+Generator sample args: data 10000  u  0 0 u        generates Point data set to cout  ( u is dummy here)
+					   data 10000  u  0.02 0.02 f  generates fixed-sized Region data set to cout
+                       query 100   g  0.1   0.1   0.3  generates sample queries to cout. The queries aqar is 0.3
+
+RTReeLoad sample args:  data/data database/tree 1 10 92 intersection 1     -- plotting is on.
+RTReeBulkLoad sample args:  data/data database/tree 1 10 92 0.99 0    1 10000 100   -- plotting is off.  aqar=1
+RTreeQuery sample args:     query/queries database/STR-tree_30000 10 intersection   -- cache size is 10.
 
 Experiement Scripts:
 ---------------------------
 
-Run the ("run-1 ...." and "run-2" scripts...) ordered as below!!
+rtree/ccpe/exp1::
+------------------
 
-1-)  "$./load/run-1-DataGenAndLoad -d10000":  We generate dataset & Load Dyn and STR
-        ----> Parameters here:
+    "$./settings.sh -d10000  -lu -x0 -y0 -ef    -c92   100 u 0.01  0.01 ":   First 5 arg is related to data. 6th is idx capacity. The last 4 are related to query.
+	Here, We generate 10.000-sized-point-dataset & Load Dyn and STR with capcity of 92.
+	Then we generate 100 "0.01*0.01-sized" "uniformly-distributed" 7 query set.
+	Each query set has different AQAR value:  0.1, 0.3, 0.7, 1.4, 3.3, 10
+
+	gen_data_query_AND_load_indexes.sh:
+          ----> Parameters used here:
   		  ds, data_loc_dist,
-  		  dx, dy, d_dist, (extent of data regions and extent distr.)
+  		  dx, dy, dxdy_dist, (extent of data regions and extent distr.)
   		  pS,bP for ext. sorting
-        ----> At the end of this part, we will have:
+          ----> At the end of gen_data_query_AND_load_indexes, we will have:
           in "/data" dir: like data10000_u_0_0_f   (i.e. point set)
           in "/database/ds" directory (f.e. ds:10000) : [ D_tree10000_u_0_0_f_92.dat, ....idx, ...Loading-Stats ]  and same for all other 7 STR trees (one is normal STR, the other 6 is AdpSTR)
           in "/plt" directory: pltdata, pltDynLevel0, pltSTRLevel0_0.1, ....pltSTRLevel0_10
 		  Note that plt directory holds only 1 database's plot data i.e. the current database. (There is no prefix info, just pltdata, pltDynLevel0, ...)
 
-2-) "$./runQry/run-2-QueryGenAndExec -d10000".: We generate "querysets" & "run it on Dyn and STR and AdpSTR"
-		----> Parameters here:
+	exec_queries_On_Trees.sh:
+          Generated "querysets" & "run it on Dyn and STR and AdpSTR"
+		  ----> Parameters here:
           qs, query_loc_dist
 		  qx,qy  ( extent, always fix. Because we already modify AQAR in the code)
-
-		----> At the end of this part, we will have:
+          ----> At the end of exec_queries_On_Trees, we will have:
 		  # Codes of Query Ave. Aspect Ratio (AQAR). 01,03,07,1,14,33,10
-		  run-QueryGen       --> in "query" directory:We will have 7 querysets like "query100_u_0.5_0.5_0.1" "query100_u_0.5_0.5_0.3" ..."query100_u_0.5_0.5_1" .."query100_u_0.5_0.5_10"
-		  					     in "plt" directory:  pltquery0.1, ...pltquery10
+		  in "query/" directory:We will have 7 querysets like "query100_u_0.5_0.5_0.1" "query100_u_0.5_0.5_0.3" ..."query100_u_0.5_0.5_1" .."query100_u_0.5_0.5_10"
+		  in "plt" directory:  pltquery0.1, ...pltquery10
 
-		  run-QueryExecOnTrees --> in "plt" directory: We will have 3 files named as "1,2,3"  ( file 0 is always there!)
+		  in "plt" directory: We will have 3 files named as "1,2,3"  ( file 0 is always there!)
 									     1 has R*tree results for all 7 query sets.
 									     2 has STR-tree results for all 7 query sets.
 									     3 has AdpSTR-tree results for all 7 query sets.
-									 --> in "results" directory we will have "7 files for each Dyn-tree, STR-tree"
+		  in "results" directory we will have "7 files for each Dyn-tree, STR-tree"
 									      and 6 output results files for Adp-STR. ( ...0.1_0.1, 0.3_0.3, 0.7_0.7, 1.4_1.4, 3.3_3.3, 10_10 (1_1 yok cunku bu zaten ordinary STR)
 
-		  					         --> Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
+		  Compare *some* result sets in results directory for 3 trees only f.e. "query....._0.3" query set.
 
-      If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with
+          If e/t seems fine, then results are combined into "rRES" and "tRES" file in "plt" directory with
 				paste 0 r1 r2 r3 > "rRES"   --> holds number of reads stats.
 				paste 0 t1 t2 t3 > "tRES"   --> Latency stats.
-       command in VALIDATION section in run-QueryExecOnTrees.
-
+          command in VALIDATION section
 				--> in "PLT" directory: We will have FINAL perf. results in 4-column in rRES and tRES files.
 
    RES dosyalarındaki "AQAR=1" satırındaki, STR ve AdpSTR değerleri farklı olabilir. Yani en azından birbirine yakın olması bekleniyor.
@@ -53,20 +60,24 @@ Run the ("run-1 ...." and "run-2" scripts...) ordered as below!!
    Ancak farklı zamanlarda çalıştırdığımızda tampon havuz durumuna göre elbette latency gecikmesi farklı olabiliyor.
    Bu deneyin amacı R*, STR ve Adp STR zamansal karşılaştırılması için bir fikir vermek.
 
- 3-) "$./loadAndRun/run-ForAllDs.sh -rQueryArea -aAQAR":  Q. Execution sens. to Data set size between 10K - to 100K.for a specific "Query-Area" and "AQAR".
+rtree/ccpe/exp2::
+------------------
+
+"$./run-ForAllDs.sh -rQueryArea -aAQAR":  Q. Execution sens. to Data set size between 10K - to 100K.for a specific "Query-Area" and "AQAR".
       		F.e.:  "$./loadAndRun/run-ForAllDs.sh -r0.0016 -a0.3"
-     "$./loadAndRun/run-ForAllDs2.sh":  Önceden oluşturulan AllDSoutput vesini bar plot olarak çiziyor.
-     /load ve /runQry  altındaki script'lerin biraraya gelmesi.
+     "$./run-ForAllDs2.sh":  Önceden oluşturulan AllDSoutput vesini bar plot olarak çiziyor.
      10K-100K data generation. Ağaçların yüklenmesi ve belli bir ortalama alan ve AQAR değerli iş yüklerinin her indeks'de çalıştırılması.
      Sorgu sonuçlarının karşılaştırılıp doğrulanması. İndeks çalışma zamanlarının saklanması ((AllDSoutput)) ve bar graph plotting.
+     AQAR-uyumlulugun artan DS veri setlerinde korundugunu gosteren bir deney.
 
 PLOTs in CCPE article:
 ---------------------------
-You do not need to activate GnuPlot. Run sh files under /test5 to plot data, query and Leaf MBRs of R*-tree, STR-tree and Adp-STR-tree.
+You do not need to activate GnuPlot. You may Run sh files under /plotting to plot data, query and Leaf MBRs of R*-tree, STR-tree and Adp-STR-tree.
 Use dataset size as the input for data plotting, query AQAR as the input for query plotting.
-$ pltdata-draw.sh -d10000
-$ pltquery-draw.sh -a0.3   --> a: aspect ratio.
-$ pltDynLevel0-draw.sh -d10000
+$ pltdata-draw.sh -d10000    (-d10000 is optional)
+$ pltquery-draw.sh -a0.3      (-a: aspect ratio. is must. -d100 is optional)
+$ pltDynLevel0-draw.sh -d10000  (-d10000 is optional)
+$ pltSTRLevel0-draw.sh -d10000 -a10  (-a: aspect ratio. is must. -d10000 is optional)
 ...
 
 You may (or not) also plot pltdata and Leaf MBRs and pltquery during loading & querying IFF you (un)comment the plotting line at

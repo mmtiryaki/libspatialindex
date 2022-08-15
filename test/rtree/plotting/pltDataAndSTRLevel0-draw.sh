@@ -19,8 +19,8 @@ gnuplot -persist <<-EOFMarker
 	set yrange[0:1.2]
 	set grid
 	set size square
-	set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
-	plot "~/eclipse-workspace/test-build/plt/pltdata" using 1:2 w p title "point" ps 0.4, "~/eclipse-workspace/test-build/plt/pltSTRLevel0_$aqar" using 1:2 w l  title "Leaf-MBR" ls 2
+#	set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
+	plot "~/eclipse-workspace/test-build/plt/pltdata" using 1:2 w p title "point" ps 0.2 pt 15, "~/eclipse-workspace/test-build/plt/pltSTRLevel0_$aqar" using 1:2 w l  title "Leaf-MBR" dt 2
 EOFMarker
 
 

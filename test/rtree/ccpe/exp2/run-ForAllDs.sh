@@ -7,7 +7,7 @@
 
 
 # my source:
-SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree/test5/loadandRun/"  # Here, do not use "~/git/...". It does not work!
+SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree"  # Here, do not use "~/git/...". It does not work!
 
 # my execs:
 bindir=$HOME/eclipse-workspace/test-build/
@@ -47,12 +47,10 @@ data_loc_dist=u  # data location distribution: uniform or gaussian, u or g
 #export dy=0.01
 dx=0
 dy=0
-d_dist=f    # DATA EXTENT distribution: f or u: fixed size or uniformly distr.
+dxdy_dist=f    # DATA EXTENT distribution: f or u: fixed size or uniformly distr.
 
 
-
-
-treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}
+#treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}
 
 
 
@@ -65,18 +63,19 @@ mkdir -p $HOME/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir 
 pltdir=$HOME/eclipse-workspace/test-build/plt
 
 
-dslist=(10000 20000 30000 40000 50000 60000 70000 80000 90000 100000)  # data set sizes: 10K, 20K....100K
+#dslist=(10000 20000 30000 40000 50000 60000 70000 80000 90000 100000)  # data set sizes: 10K, 20K....100K
+dslist=(10000 20000 30000 40000)  # data set sizes: 10K, 20K....100K
 for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others are Adp-STR.
 	ds=$i;
-	dpostfix=${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist};
+	dpostfix=${ds}_${data_loc_dist}_${dx}_${dy}_${dxdy_dist};
 	datafile=${datadir}/data${dpostfix};
-	treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity}
+	treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${dxdy_dist}_${capacity}
 
 	mkdir -p $HOME/eclipse-workspace/test-build/database/${ds};    # -p flag: mk dir only if dir does not exist.
 	dbdir=$HOME/eclipse-workspace/test-build/database/${ds};
 
-	echo Generating dataset;  #"Usage: ds data_loc_dist qs query_loc_dist d_dx d_dy d_dist q_dx q_dy q_dist"
-	time ${bindir}/test-rtree-Generator $ds $data_loc_dist 0 u $dx $dy $d_dist 0.1 0.1 f > d;   # 0 u ... 0.1 0.1 f : dummy values..
+	echo Generating dataset;
+	time ${bindir}/test-rtree-Generator data $ds $data_loc_dist $dx $dy $dxdy_dist > d;
 
 	awk '{if ($1 != 2) print $0}' < d > ${datafile};
 	rm -rf d;
@@ -153,7 +152,7 @@ for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others ar
 rm -rf $pltdir/AllDSoutput
 echo DataSetSize R*-tree  STR-tree  Adp-STR-tree >$pltdir/AllDSoutput
 qs=100
-query_loc_dist=u  # QUERY location distribution: uniform of gaussian, u or g
+ql=u  # QUERY location distribution: uniform of gaussian, u or g
 # AQAR = qx/qy changes from [0.1, 0.3, 0.7, 1, 1.428, 3.33, 10 ]
 # QUERY AREA = Example:  Alan = 16e-4  ==> 0.04 * 0.04
 qx=$(echo "sqrt($area)" |bc)
@@ -162,14 +161,14 @@ qy=$(echo "sqrt($area)" |bc)
 mkdir -p  $HOME/eclipse-workspace/test-build/query  # -p flag: mk dir only if dir does not exist.
 querydir=$HOME/eclipse-workspace/test-build/query
 
-qpostfix=${qs}_${query_loc_dist}_${qx}_${qy}
+qpostfix=${qs}_${ql}_${qx}_${qy}
 queryfile=${querydir}/query${qpostfix}
 
 mkdir -p $HOME/eclipse-workspace/test-build/results
 resultsdir=$HOME/eclipse-workspace/test-build/results
 
-echo Generating queryset  #"Usage: ds data_loc_dist qs query_loc_dist d_dx d_dy d_dist q_dx q_dy q_dist"
-${bindir}/test-rtree-Generator 1 u $qs $query_loc_dist 0.1 0.1 f $qx $qy ${aqar}   > d1   # 1 u .. 0.1 0.1 f is dummy
+echo Generating queryset
+${bindir}/test-rtree-Generator query $qs $ql $qx $qy ${aqar}   > d1
 # generate only queries..
 awk '{if ($1 == 2) print $0}' < d1 > ${queryfile}_${aqar}
 rm -rf d1
@@ -181,7 +180,7 @@ END{}' ${queryfile}_${aqar} > ${pltdir}/pltquery${aqar}
 for i in "${dslist[@]}"; do    # note that aqar=1 is the ordinary STR. Others are Adp-STR.
 	ds=$i;
 	dbdir=$HOME/eclipse-workspace/test-build/database/${ds};
-	treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${d_dist}_${capacity};
+	treeprefix=tree${ds}_${data_loc_dist}_${dx}_${dy}_${dxdy_dist}_${capacity};
 
 	treename=D_${treeprefix};
 	echo Querying $treename with ${queryfile}_$aqar;

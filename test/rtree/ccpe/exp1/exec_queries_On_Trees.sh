@@ -15,9 +15,22 @@
 #echo ${treename}_${aqar}    -->bunu da begendi. :>
 
 
+#######################
+#We have
+#	-- 1 R*tree and 1 STR-tree and 7 ADP-STR tree.
+#	-- 7 query files
+#Below, each query file is run on each tree ( R*tree, STR and 7 Adp-STR)
+#	r- files collect Reads statistics and sent to plt/ directory
+#	t- files collect time stats and sent to plt/ directory
+#AND
+#    results are sent to result/ directory
+#
+#Stats are plotted based on r and t files in plt/ dir
+#Validation is done based on results in result/ dir
 ############## R*-tree: ##########################
 
 echo ----------------  R*-tree -------------
+# Sent each query set to classic STR-tree
 treename=D_${treeprefix}
 readstatsfile=r1
 timestatsfile=t1
@@ -26,11 +39,11 @@ for i in 0.1 0.3 0.7 1 1.4 3.3 10; do
 	aqar="$i";
 	echo Querying $treename with ${queryfile}_$aqar;
 	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename $cache_size intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
-	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;
-	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;
+	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;  # append each Reads-value to r1
+	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;   # append each Time-value to t1
 	rm -rf r;
 	echo ----------------
-	done
+done
 mv  $readstatsfile $pltdir
 mv  $timestatsfile $pltdir
 
@@ -39,7 +52,7 @@ echo ----------------
 ############   STR-tree    ##########################
 
 echo ----------------  STR-tree -------------
-
+# Sent each query set to classic STR-tree
 treename=S_${treeprefix}_1
 readstatsfile=r2
 timestatsfile=t2
@@ -48,8 +61,8 @@ for i in 0.1 0.3 0.7 1 1.4 3.3 10; do
 	aqar="$i";
 	echo Querying $treename with ${queryfile}_$aqar;
 	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename $cache_size intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
-	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;
-	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;
+	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;  # append each Reads-value to r2
+	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;   # append each time-value to t2
 	rm -rf r;
 	echo ----------------
 	done
@@ -62,6 +75,7 @@ echo ----------------
 ########   Adp STR-tree  ########################
 
 echo ----------------  Adp-STR-tree -------------
+# Sent each query set to Adp-STR-tree having the same aqar with the query set.
 readstatsfile=r3
 timestatsfile=t3
 for i in 0.1 0.3 0.7 1 1.4 3.3 10; do
@@ -69,8 +83,8 @@ for i in 0.1 0.3 0.7 1 1.4 3.3 10; do
 	treename=S_${treeprefix}_${aqar};
 	echo Querying $treename with ${queryfile}_$aqar;
 	time ${bindir}/test-rtree-RTreeQuery ${queryfile}_${aqar} $dbdir/$treename $cache_size intersection 2>r 1>$resultsdir/${treename}_${aqar};      #redirect cerr to 'r' AND redirect cout to results...file
-	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;
-	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;
+	awk '{if ($1 ~ /Reads/) print $2}' < r >> $readstatsfile;  # append each Reads-value to r3
+	awk '{if ($1 ~ /Time/) print $9}' < r >> $timestatsfile;   # append each Reads-value to t3
 	rm -rf r;
 	echo ----------------
 	done
@@ -91,8 +105,8 @@ sort -n $resultsdir/S_${treeprefix}_0.3_0.3 > c  # Adaptive STR
 if diff a b
 then
 echo "Same results with exhaustive search. Everything seems fine."
-paste $SCRIPT_PATH/0 $pltdir/r1 $pltdir/r2 $pltdir/r3 > $pltdir/rRES
-paste $SCRIPT_PATH/0 $pltdir/t1 $pltdir/t2 $pltdir/t3 > $pltdir/tRES
+paste $SCRIPT_PATH/ccpe/exp1/0 $pltdir/r1 $pltdir/r2 $pltdir/r3 > $pltdir/rRES   # Combine 7 values from r-files
+paste $SCRIPT_PATH/ccpe/exp1/0 $pltdir/t1 $pltdir/t2 $pltdir/t3 > $pltdir/tRES   # Combine 7 values from t-files
 echo Results: `wc -l a`
 rm -rf b
 else
@@ -119,7 +133,7 @@ maxY=$(cat $pltdir/r1 $pltdir/r2 $pltdir/r3 | sort -n | tail -1)
 #echo $maxY
 queryarea=$(echo "$qx*$qy" |bc -l)
 gnuplot -persist <<-EOFMarker
-	set title "Query Exec. Latency's Sensitivity to AQAR (DS=$ds, Query Area=$queryarea)"
+	set title "Query Exec. Node-Read's Sensitivity to AQAR (DS=$ds, Query Area=$queryarea)"
 	set xlabel "AQAR"
 	set ylabel "Number Of Nodes Read"
 	set xrange[0.1:10]
