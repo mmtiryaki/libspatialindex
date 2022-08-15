@@ -85,12 +85,12 @@ else
 			awk 'BEGIN {}
 			{print $3," ",$4; print $5," ",$4; print $5," ",$6; }  # may combine the prints in the same line if you wish.
 			{print $3," ",$6; print $3," ",$4; print ""}
-			END{}' $queryfile > ${pltdir}/pltquery
+			END{}' $queryfile > ${pltdir}/pltquery_$dxdy_dist
 		else
 			echo "Only window queries expected.!!"
     		exit
 		fi
-		$SCRIPT_PATH/plotting/pltquery-draw.sh
+		$SCRIPT_PATH/plotting/pltquery-draw.sh -d$ds -a$dxdy_dist
 fi
 
 

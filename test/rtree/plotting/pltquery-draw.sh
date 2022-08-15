@@ -3,15 +3,16 @@
 # Run this file in bash with ./pltquery-draw.sh -a0.3   i.e.
 
 # get query set size from console:
-while getopts a: flag   # you may add extra s.a. flags d:x:a:
+while getopts d:a: flag   # you may add extra s.a. flags d:x:a:
 do
     case "${flag}" in
-        a) qar=${OPTARG};;
+    	d) ds=${OPTARG};;
+        a) aqar=${OPTARG};;
     esac
 done
 
 gnuplot -persist <<-EOFMarker
-	set title "Query Set with 100 query-regions in Unit Area"
+	set title "Query Set with $ds query-regions with aqar=$aqar in Unit Area"
 	set xlabel "x"
 	set ylabel "y"
 	set xtics 0.1
@@ -23,7 +24,7 @@ gnuplot -persist <<-EOFMarker
 	set xrange[0:1.2]
 	set yrange[0:1.2]
 	#set style line 1 lc rgb 'red' pt 7 pointsize 0.3   # unset style line 1
-	plot "~/eclipse-workspace/test-build/plt/pltquery" using 1:2 w l title "AQAR=$dxdy_dist" ls 2
+	plot "~/eclipse-workspace/test-build/plt/pltquery_$aqar" using 1:2 w l title "AQAR=$aqar" ls 2
 
 EOFMarker
 

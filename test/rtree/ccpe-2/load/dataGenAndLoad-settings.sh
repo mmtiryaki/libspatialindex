@@ -7,7 +7,7 @@
 
 # Sample usage:
 #       --- run-1-DataGenAndLoad.sh -tdata  -d100 -lu -x0.04 -y0.04 -ef   -c5
-#		--- run-1-DataGenAndLoad.sh -tquery -d100 -lu -x0.04 -y0.04 -e1.4
+#		--- run-1-DataGenAndLoad.sh -tquery -d100 -lu -x0.04 -y0.04    
 
 # my source:
 export SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree"  # Here, do not use "~/git/...". It does not work!
@@ -62,9 +62,9 @@ if [[ $obj_type == 'data' ]] && ([[ $dxdy_dist != 'f' ]] && [[ $dxdy_dist != 'u'
     exit
 fi
 
-if [[ $obj_type == 'query' ]] && ([[ $dxdy_dist == 'f' ]] || [[ $dxdy_dist == 'u' ]]);
+if [[ $obj_type == 'query' ]] && ([[ $dxdy_dist ]]);
   then
-    echo "No AQAR supplied. See the usage."
+    echo "Do not enter AQAR. All AQARs will be generated!"
     exit
 fi
 
@@ -92,14 +92,17 @@ mkdir -p  $HOME/eclipse-workspace/test-build/data  # -p flag: mk dir only if dir
 export datafile=$HOME/eclipse-workspace/test-build/data/data${ds}_${loc_dist}_${dx}_${dy}_${dxdy_dist}
 
 mkdir -p  $HOME/eclipse-workspace/test-build/query  # -p flag: mk dir only if dir does not exist.
-export queryfile=$HOME/eclipse-workspace/test-build/query/query${ds}_${loc_dist}_${dx}_${dy}_${dxdy_dist}
+export queryfile=$HOME/eclipse-workspace/test-build/query/query${ds}_${loc_dist}_${dx}_${dy}
 
 
 mkdir -p $HOME/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir does not exist.
 export pltdir=$HOME/eclipse-workspace/test-build/plt
 
-mkdir -p $HOME/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
-export dbdir=$HOME/eclipse-workspace/test-build/database/${ds}
+if [[ $obj_type == 'data' ]];
+then
+	mkdir -p $HOME/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
+	export dbdir=$HOME/eclipse-workspace/test-build/database/${ds}
+fi
 
 ./run.sh
 

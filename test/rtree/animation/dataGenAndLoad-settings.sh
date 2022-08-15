@@ -98,8 +98,11 @@ export queryfile=$HOME/eclipse-workspace/test-build/query/query${ds}_${loc_dist}
 mkdir -p $HOME/eclipse-workspace/test-build/plt   # -p flag: mk dir only if dir does not exist.
 export pltdir=$HOME/eclipse-workspace/test-build/plt
 
-mkdir -p $HOME/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
-export dbdir=$HOME/eclipse-workspace/test-build/database/${ds}
+if [[ $obj_type == 'data' ]];
+then
+	mkdir -p $HOME/eclipse-workspace/test-build/database/${ds}    # -p flag: mk dir only if dir does not exist.
+	export dbdir=$HOME/eclipse-workspace/test-build/database/${ds}
+fi
 
 ./run.sh
 
