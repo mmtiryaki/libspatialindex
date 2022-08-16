@@ -3,8 +3,12 @@
 
 # NOTE:(UK) This file uses real data sets and load it into R*tree and STR-tree.
 # sample usage: ...$./realDataLoad.sh nyc public nyc_subway_stations  -- $1: database  $2:schema $3:spatial-table
+
 # my execs:
 bindir=$HOME/eclipse-workspace/test-build/
+
+# my source:
+export SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree"  # Here, do not use "~/git/...". It
 
 capacity=92
 fillfactor=0.999   # used in only bulk loading
@@ -68,6 +72,25 @@ maxy=$(awk 'NR==1{print $10 }' t)
 
 rm -rf t
 
+#pltdata may be generated here..!!
+####### DATA PLOTTING: (Actually data objects's MBR PLOTTING, not object's itself.)
+# (MULTI)POLYLINE icin de VT'dan MBR geldi. O yuzden POINT dısındaki her sey icin Region cizecegiz.
+if [[ $geomtype == POINT ]];
+	then
+	awk 'BEGIN {}
+	{print $3," ",$4}
+	END{}' $datafile > ${pltdir}/pltdata
+	$SCRIPT_PATH/plotting/pltPointData-draw.sh $minx $maxx $miny $maxy
+else
+	# plotting requires 4 edge points of MBR
+	awk 'BEGIN {}
+	{print $3," ",$4; print $5," ",$4; print $5," ",$6; }  # may combine the prints in the same line if you wish.
+	{print $3," ",$6; print $3," ",$4; print ""}
+	END{}' $datafile > ${pltdir}/pltdata
+	bash $SCRIPT_PATH/plotting/pltRegionData-draw.sh $minx $maxx $miny $maxy 
+fi
+
+
 
 
 echo Load R*-Tree ${treename}_Dyn
@@ -75,7 +98,7 @@ echo Load R*-Tree ${treename}_Dyn
 # > r  : redirect std output to file r with replacing r.  >> : redirect and append to file r.
 #time ../../test-rtree-RTreeLoad $datafile $treename $capacity intersection > r 2>&1    # intersection is query type. But we are not sending any query!!
 
-time ${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $capacity intersection 2>r 1>${pltdir}/pltDynLevel0     #redirect cerr to 'r' AND redirect cout to plt...file
+time ${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename 1 100 $capacity intersection 1 2>r 1>${pltdir}/pltDynLevel0     #redirect cerr to 'r' AND redirect cout to plt...file
 awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /TOTAL/ ||
 		  $1 ~ /Buffer/ ||
@@ -92,7 +115,7 @@ rm -rf r
 echo -------------
 
 echo Load STR-Tree ${treename}_STR
-time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename $capacity $fillfactor 1 $pS $bP 2> r 1>${pltdir}/pltSTRLevel0;  #redirect cerr to 'r' AND redirect cout to plt...file
+time ${bindir}/test-rtree-RTreeBulkLoad $datafile ${dbdir}/$treename 1 100 $capacity $fillfactor 1 1 $pS $bP 2> r 1>${pltdir}/pltSTRLevel0;  #redirect cerr to 'r' AND redirect cout to plt...file
 	awk '{if ($1 ~ /Time/  ||
 		  $1 ~ /TOTAL/ ||
 		  $1 ~ /Buffer/ ||
@@ -121,8 +144,8 @@ gnuplot -persist <<-EOFMarker
 	unset ytics
 	set grid
 	set size square
-	set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
-	plot "~/eclipse-workspace/test-build/plt/pltDynLevel0" using 1:2 w l  title "Leaf-MBR" ls 2
+	#set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
+	plot "~/eclipse-workspace/test-build/plt/pltDynLevel0" using 1:2 w l  title "Leaf-MBR" lw 1
 EOFMarker
 
 
@@ -138,8 +161,8 @@ gnuplot -persist <<-EOFMarker
 	unset ytics
 	set grid
 	set size square
-	set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
-	plot "~/eclipse-workspace/test-build/plt/pltSTRLevel0" using 1:2 w l  title "Leaf-MBR" ls 2
+	#set style line 2 lc rgb 'black' linetype 1 lw 1  # unset style line 2
+	plot "~/eclipse-workspace/test-build/plt/pltSTRLevel0" using 1:2 w l  title "Leaf-MBR" lw 1
 EOFMarker
 
 

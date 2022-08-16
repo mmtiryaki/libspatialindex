@@ -3,12 +3,12 @@
 # Run this file in bash with ./pltdata-draw.sh -d10000   i.e.
 
 # get data size from console:
-while getopts d: flag   # you may add extra s.a. flags d:x:a:
-do
-    case "${flag}" in
-        d) ds=${OPTARG};;
-    esac
-done
+#while getopts d: flag   # you may add extra s.a. flags d:x:a:
+#do
+#    case "${flag}" in
+#        d) ds=${OPTARG};;
+#    esac
+#done
 
 gnuplot -persist <<-EOFMarker
 	set title "$ds objects in Unit Area "
@@ -16,8 +16,12 @@ gnuplot -persist <<-EOFMarker
 	set ylabel "y"
 	unset logscale x
 	unset logscale y
-	set xrange[0:1.2]
-	set yrange[0:1.2]
+#	set xrange[0:1.2]
+#	set yrange[0:1.2]
+	set xrange[$1:$2]
+	set yrange[$3:$4]
+	unset xtics
+	unset ytics	
 	set grid
 	set size square
 	#set style line 1 lc rgb 'black' pt 7 pointsize 0.3   # unset style line 1

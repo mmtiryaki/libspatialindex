@@ -10,7 +10,7 @@
 #			--- Adp-STR-tree having the same aqar with query set. The goal is to see the adv of adaptive STR tree.
 
 # Sample usage:
-#     --- ./settings.sh  -d10000  -lu -x0 -y0 -ef -c5  100 u  0.02  0.02
+#     --- ./settings.sh  -d10000  -lu -x0 -y0 -ef -c92  100 u  0.02  0.02
 #														qs ql  qx    qy
 
 # my source:

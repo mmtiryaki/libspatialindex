@@ -20,12 +20,12 @@ then
 			{print $3," ",$4; print $5," ",$4; print $5," ",$6; }  # may combine the prints in the same line if you wish.
 			{print $3," ",$6; print $3," ",$4; print ""}
 			END{}' $datafile > ${pltdir}/pltdata
-			#bash $SCRIPT_PATH/plotting/pltRegionData-draw.sh
+			bash $SCRIPT_PATH/plotting/pltRegionData-draw.sh 0 1.2 0 1.2
 			else
 			awk 'BEGIN {}
 			{print $3," ",$4}
 			END{}' $datafile > ${pltdir}/pltdata
-			#bash $SCRIPT_PATH/plotting/pltPointData-draw.sh
+			bash $SCRIPT_PATH/plotting/pltPointData-draw.sh 0 1.2 0 1.2
 		fi
 
 		# R*-tree Loading:
