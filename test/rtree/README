@@ -1,0 +1,6 @@
+
+rtree/ altındaki "test1,2,3,4" calismayacak !!
+
+Cunku dev/ branch altındaki Generator, RtreeLoad, RtreebulkLoad argumanları degisti.
+Bu testleri gene de burada bıkartım, --fikir vermesi adına--
+bu testleri calistirmak istersen master/ branch altinda calistirabilirsin.
