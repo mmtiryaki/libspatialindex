@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo Generating objects  #"Usage: ds data_loc_dist qs query_loc_dist d_dx d_dy d_dist q_dx q_dy q_dist"
+echo Generating objects  
 
-#time ${bindir}/test-rtree-Generator $obj_type $ds $data_loc_dist $dx $dy $dxdy_dist > d
+
 
 # For mixed data-query may be used below..
 #awk '{if ($1 != 2) print $0}' < d > ${datafile}

@@ -6,8 +6,8 @@
 #     --- quey set with a specific AQAR values.
 
 # Sample usage:
-#       --- run-1-DataGenAndLoad.sh -tdata  -d100 -lu -x0.04 -y0.04 -ef   -c5
-#		--- run-1-DataGenAndLoad.sh -tquery -d100 -lu -x0.04 -y0.04 -e1.4
+#       ---  ./dataGenAndLoad-settings.sh -tdata  -d100 -lu -x0.04 -y0.04 -ef   -c5
+#		---  ./dataGenAndLoad-settings.sh -tquery -d100 -lu -x0.04 -y0.04 -e1.4
 
 # my source:
 export SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree"  # Here, do not use "~/git/...". It does not work!
