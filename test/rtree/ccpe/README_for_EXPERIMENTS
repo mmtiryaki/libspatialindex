@@ -1,10 +1,10 @@
 Sample execution parameters in /dev/ branch:  (More explainations in SAIL My Notes.txt )
 -----------------------------------------------------------
-Generator sample args: data 10000  u  0 0 u        generates Point data set to cout  ( u is dummy here)
-					   data 10000  u  0.02 0.02 f  generates fixed-sized Region data set to cout
-                       query 100   g  0.1   0.1   0.3  generates sample queries to cout. The queries aqar is 0.3
+Generator sample args: data 10000  u  0 0 u        generates uniformly-distributed Point data set to cout  ( last u is dummy here)
+					   data 10000  u  0.02 0.02 f  generates (f)ixed-sized Region data set to cout
+                       query 100   g  0.1   0.1   0.3  generates normally-distributed sample queries to cout. The queries aqar is 0.3
 
-RTReeLoad sample args:  data/data database/tree 1 10 92 intersection 1     -- plotting is on.
+RTReeLoad sample args:  data/data database/tree 1 10 92 intersection 1     -- page size 1 (i.e. 4K), use 10 pages and plotting is on.
 RTReeBulkLoad sample args:  data/data database/tree 1 10 92 0.99 0    1 10000 100   -- plotting is off.  aqar=1
 RTreeQuery sample args:     query/queries database/STR-tree_30000 10 intersection   -- cache size is 10.
 
@@ -15,7 +15,7 @@ rtree/ccpe/exp1::
 ------------------
 
     "$./settings.sh -d10000  -lu -x0 -y0 -ef    -c92   100 u 0.01  0.01 ":   First 5 arg is related to data. 6th is idx capacity. The last 4 are related to query.
-	Here, We generate 10.000-sized-point-dataset & Load Dyn and STR with capcity of 92.
+	Here, We generate 10.000 fixed-sized-point-dataset & Load Dyn and STR with capacity of 92.
 	Then we generate 100 "0.01*0.01-sized" "uniformly-distributed" 7 query set.
 	Each query set has different AQAR value:  0.1, 0.3, 0.7, 1.4, 3.3, 10
 
@@ -37,7 +37,7 @@ rtree/ccpe/exp1::
 		  qx,qy  ( extent, always fix. Because we already modify AQAR in the code)
           ----> At the end of exec_queries_On_Trees, we will have:
 		  # Codes of Query Ave. Aspect Ratio (AQAR). 01,03,07,1,14,33,10
-		  in "query/" directory:We will have 7 querysets like "query100_u_0.5_0.5_0.1" "query100_u_0.5_0.5_0.3" ..."query100_u_0.5_0.5_1" .."query100_u_0.5_0.5_10"
+		  in "query/" directory:We will have 7 querysets like "query100_u_0.01_0.01_0.1" "query100_u_0.01_0.01_0.3" ..."query100_u_0.01_0.01_1" .."query100_u_0.01_0.01_10"
 		  in "plt" directory:  pltquery0.1, ...pltquery10
 
 		  in "plt" directory: We will have 3 files named as "1,2,3"  ( file 0 is always there!)
@@ -74,12 +74,12 @@ PLOTs in CCPE article:
 ---------------------------
 You do not need to activate GnuPlot. You may Run sh files under /plotting to plot data, query and Leaf MBRs of R*-tree, STR-tree and Adp-STR-tree.
 Use dataset size as the input for data plotting, query AQAR as the input for query plotting.
-$ pltdata-draw.sh -d10000    (-d10000 is optional) 
+$ pltdata-draw.sh -d10000    (-d10000 is optional)
 $ pltquery-draw.sh -a0.3      (-a: aspect ratio. is must. -d100 is optional)
 $ pltDynLevel0-draw.sh -d10000  (-d10000 is optional)
 $ pltSTRLevel0-draw.sh -d10000 -a10  (-a: aspect ratio. is must. -d10000 is optional)
-$ pltPointData-draw.sh 0 1.2 0 1.2   (Bunlar "minx maxx miny maxy" arg alıyor. Onceki diger plt script'lerinde de ihtiyaca gore bunlar dışardan alınabilir) 
-$ pltRegionData-draw.sh 0 1.2 0 1.2  
+$ pltPointData-draw.sh 0 1.2 0 1.2   (Bunlar "minx maxx miny maxy" arg alıyor. Onceki diger plt script'lerinde de ihtiyaca gore bunlar dışardan alınabilir)
+$ pltRegionData-draw.sh 0 1.2 0 1.2
 
 You may (or not) also plot pltdata and Leaf MBRs and pltquery during loading & querying IFF you (un)comment the plotting line at
 the script file.
@@ -92,7 +92,7 @@ $./settings.sh -d20000  -lu -x0 -y0 -ef    -c92
 ...
 $./settings.sh -d50000  -lu -x0 -y0 -ef    -c92
 
-"Figure 3" & "Figure 4 (a) and (c)" have been generated as the output of " $./settings.sh -d50000  -lu -x0 -y0 -ef -c92 100 u 0.01  0.01"  script 
+"Figure 3" & "Figure 4 (a) and (c)" have been generated as the output of " $./settings.sh -d50000  -lu -x0 -y0 -ef -c92 100 u 0.01  0.01"  script
 
 "Figure 4 (b) bar-graph": Q. Execution sens. to Data set size between 10K - to 100K.
 output of exp2 section above.

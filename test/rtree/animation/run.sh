@@ -1,8 +1,6 @@
 #!/bin/bash
 
-echo Generating objects  
-
-
+echo Generating objects
 
 # For mixed data-query may be used below..
 #awk '{if ($1 != 2) print $0}' < d > ${datafile}
