@@ -64,4 +64,4 @@ foreach(test ${SOURCES})
     target_link_libraries(test-${DIR}-${test} spatialindex)
 endforeach()
 
-add_subdirectory(gtest)
+#add_subdirectory(gtest)
