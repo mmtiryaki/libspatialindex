@@ -206,14 +206,9 @@ int main(int argc, char** argv)
 
 		auto t1 = std::chrono::high_resolution_clock::now(); //utku
 
-//		while (fin)
+		if (fin) fin >> op >> id >> x1 >> y1 >> x2 >> y2;
 		while(true)
 		{
-			if (fin) {
-				fin >> op >> id >> x1 >> y1 >> x2 >> y2;
-				if (!fin.good())
-					continue; // skip newlines, etc.
-			}
 
 			if (op == QUERY)
 			{
@@ -247,7 +242,7 @@ int main(int argc, char** argv)
 			}
 			else
 			{
-				cerr << "This is not a query operation." << endl;
+				cerr << "This is not a query operation, or Query file is empty." << endl;
 			}
 
 
@@ -255,9 +250,15 @@ int main(int argc, char** argv)
 			if ((count % 1000) == 0) cerr << count << endl;
 
 			count++;
-
-			if(!fin)
+			if(!fin )
 				break;
+			else {
+				fin >> op >> id >> x1 >> y1 >> x2 >> y2;
+				if (!fin.good())
+					break; // skip newlines, etc.
+			}
+
+
 		}
 		// utku:
 		auto t2 = std::chrono::high_resolution_clock::now();
