@@ -2,14 +2,11 @@
 # default shell is already bash
 
 # NOTE:(UK) This file generates 2 types of objetcs::
-#     --- data set and load it into R*tree and STR-tree and PLOT data set and Leaf MBRs.
-#     --- quey set with a specific AQAR values.
-
+#     --- data set and load it into R*tree 
+#     --- query set with a specific AQAR values.
+#	  --- execute diffrent types of queries inersection|selfjoin|10NN
 # Sample usage:
-#       ---  ./dataGenAndLoad-settings.sh -tdata  -d100 -lu -x0.04 -y0.04 -ef   -c5
-#		---  ./dataGenAndLoad-settings.sh -tquery -d100 -lu -x0.04 -y0.04 -e1.4
-
-#		---  ./rangeQuery.sh 100 u 0.04 0.04 f 5 1 u 0.08 0.08 1.4
+#		---  ./run.sh 100 u 0.04 0.04 f 5 1 u 0.08 0.08 1.4 selfjoin
 
 # my source:
 export SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree"  # Here, do not use "~/git/...". It does not work!
@@ -54,7 +51,8 @@ ${bindir}/test-rtree-Generator data $1 $2 $3 $4 $5 > $datafile
 
 echo Generate R*tree with capacity $6;
 treename=D_${treeform}
-${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $page_size $cache_size $6 intersection 0
+${bindir}/test-rtree-RTreeLoad $datafile ${dbdir}/$treename $page_size $cache_size $6 ${12} 0
+
 
 # for guaranteeing a fresh seed
 sleep 1
@@ -63,7 +61,7 @@ echo Generate query "set" with $7 $8 $9 ${10} ${11};
 ${bindir}/test-rtree-Generator query $7 $8 $9 ${10} ${11} > ${queryfile}
 
 echo Range Querying $treename with ${queryform};
-${bindir}/test-rtree-RTreeQuery ${queryfile} $dbdir/$treename $cache_size intersection 2>r 1>$resultsdir/${treename}_$queryform;      #redirect cerr to 'r' AND redirect cout to results...file
+time ${bindir}/test-rtree-RTreeQuery ${queryfile} $dbdir/$treename $cache_size ${12} 2>r 1>$resultsdir/${treename}_$queryform;      #redirect cerr to 'r' AND redirect cout to results...file
 awk '{if ($1 ~ /Reads/) print $2}' < r >> readstat;  # append each Reads-value to r1
 awk '{if ($1 ~ /Time/) print $9}' < r >> timestat;   # append each Time-value to t1
 rm -rf r;
@@ -75,7 +73,7 @@ mv  timestat $pltdir
 # Proof of correctness:::
 cat $datafile ${queryfile} > .t
 echo Running exhaustive search
-${bindir}/test-rtree-Exhaustive .t intersection > res2
+time ${bindir}/test-rtree-Exhaustive .t ${12} > res2
 
 echo Comparing results
 sort -n $resultsdir/${treename}_$queryform > a
@@ -85,7 +83,7 @@ then echo "Same results with exhaustive search. Everything seems fine."
 else echo "PROBLEM! We got different results from exhaustive search!"
 fi
 echo Results: `wc -l a`
-#rm -rf a b res2 .t
+rm -rf a b res2 .t
 
 
 
