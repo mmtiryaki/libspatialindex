@@ -151,6 +151,52 @@ public:
 	}
 };
 
+class MypointLocationQueryStrategy : public IQueryStrategy
+{
+private:
+	const IShape* point_query;
+	queue<id_type> ids;
+
+public:
+	MypointLocationQueryStrategy (const IShape& query){
+		point_query=&query;
+	}
+	void getNextEntry(const IEntry& entry, id_type& nextEntry , bool& hasNext) override
+	{
+		// the first time we are called, entry points to the root.
+
+		const INode* n = dynamic_cast<const INode*>(&entry);
+
+		// traverse only index nodes at levels 2 and higher.
+
+		for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++) {
+//			IShape *childMBR;
+//			n->getChildShape(cChild, &childMBR);
+			if ((*(n->m_ptrMBR[cChild]))->containsShape(*point_query)){
+				if (n != nullptr && n->getLevel() > 0)
+					ids.push(n->getChildIdentifier(cChild));
+				else
+					cout << n->getChildIdentifier(cChild);
+			}
+		}
+
+		if (!ids.empty()) {
+			nextEntry = ids.front();
+			ids.pop();
+			hasNext = true;
+		} else {
+			hasNext = false;
+		}
+		// stop after the root.
+//		hasNext = false;
+//
+//		IShape* ps;
+//		entry.getShape(&ps);
+//		ps->getMBR(m_indexedSpace);
+//		delete ps;
+	}
+};
+
 int main(int argc, char** argv)
 {
 	try
@@ -166,6 +212,7 @@ int main(int argc, char** argv)
 		if (strcmp(argv[4], "intersection") == 0) queryType = 0;
 		else if (strcmp(argv[4], "10NN") == 0) queryType = 1;
 		else if (strcmp(argv[4], "selfjoin") == 0) queryType = 2;
+		else if (strcmp(argv[4], "pointLocation") == 0) queryType = 3;
 		else
 		{
 			cerr << "Unknown query type." << endl;
@@ -229,10 +276,17 @@ int main(int argc, char** argv)
 					tree->nearestNeighborQuery(10, p, vis);
 						// this will find the 10 nearest neighbors.
 				}
-				else
+				else if (queryType == 2)
 				{
 					Region r = Region(plow, phigh, 2);
 					tree->selfJoinQuery(r, vis);
+				}
+				else
+				{
+					Point p = Point(plow, 2);
+					MypointLocationQueryStrategy pointquery(p);
+					tree->queryStrategy(pointquery);
+
 				}
 
 				indexIO += vis.m_indexIO;
