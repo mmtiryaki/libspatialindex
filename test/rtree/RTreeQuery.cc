@@ -166,14 +166,19 @@ public:
 		// the first time we are called, entry points to the root.
 
 		const INode* n = dynamic_cast<const INode*>(&entry);
+		IShape *cMBR;
+		n->getShape(&cMBR);
 
-		// traverse only index nodes at levels 2 and higher.
-
+		if(!(cMBR->containsShape(*point_query))){
+			cout << "query is out of indexed space " << endl;
+			hasNext = false;
+			return;
+		}
 		for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++) {
-//			IShape *childMBR;
-//			n->getChildShape(cChild, &childMBR);
-			if ((*(n->m_ptrMBR[cChild]))->containsShape(*point_query)){
-				if (n != nullptr && n->getLevel() > 0)
+
+			n->getChildShape(cChild, &cMBR);
+			if (cMBR->containsShape(*point_query)){
+				if (n != nullptr && n->isIndex())
 					ids.push(n->getChildIdentifier(cChild));
 				else
 					cout << n->getChildIdentifier(cChild);
@@ -187,13 +192,7 @@ public:
 		} else {
 			hasNext = false;
 		}
-		// stop after the root.
-//		hasNext = false;
-//
-//		IShape* ps;
-//		entry.getShape(&ps);
-//		ps->getMBR(m_indexedSpace);
-//		delete ps;
+		delete cMBR;
 	}
 };
 
