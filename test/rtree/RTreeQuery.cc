@@ -33,6 +33,7 @@
 #include <spatialindex/SpatialIndex.h>
 
 using namespace SpatialIndex;
+using namespace SpatialIndex::RTree;  // need this to use Data. Otherwise you should use RTree:Data ...
 using namespace std;
 
 #define INSERT 1
@@ -155,33 +156,67 @@ class MypointLocationQueryStrategy : public IQueryStrategy
 {
 private:
 	const IShape* point_query;
+	IVisitor* vis;
 	queue<id_type> ids;
 
 public:
-	MypointLocationQueryStrategy (const IShape& query){
+	MypointLocationQueryStrategy (const IShape& query,IVisitor& v){
 		point_query=&query;
+		this->vis=&v;
 	}
 	void getNextEntry(const IEntry& entry, id_type& nextEntry , bool& hasNext) override
 	{
 		// the first time we are called, entry points to the root.
 
+		// I know  a Node object is sent.
 		const INode* n = dynamic_cast<const INode*>(&entry);
-		IShape *cMBR;
-		n->getShape(&cMBR);
+		vis->visitNode(*n);
 
+		IShape *cMBR;
+		n->getShape(&cMBR);  // this is the current Node's MBR.
+
+		// Always contains unless at the first iteration (i.e. we are in root) the query is out of coverage.
 		if(!(cMBR->containsShape(*point_query))){
 			cout << "query is out of indexed space " << endl;
 			hasNext = false;
 			return;
 		}
+
 		for (uint32_t cChild = 0; cChild < n->getChildrenCount(); cChild++) {
 
 			n->getChildShape(cChild, &cMBR);
-			if (cMBR->containsShape(*point_query)){
-				if (n != nullptr && n->isIndex())
+			if (cMBR->containsShape(*point_query)){  // Shape's functions are enough. No need to cast to Region..
+				if (n->isIndex())  // No need to check n != nullptr
 					ids.push(n->getChildIdentifier(cChild));
-				else
-					cout << n->getChildIdentifier(cChild);
+				else{
+
+					//cout << n->getChildIdentifier(cChild)<<endl;
+					// instead "visit" data!! Maybe we need to access object's details..
+
+					uint8_t *childData=nullptr;  // must start with nullptr!
+					uint32_t len;
+					n->getChildData(cChild,len, &childData);  // already nullptr for now.
+
+					IShape *childShape=nullptr;
+					n->getChildShape(cChild, &childShape);
+
+					// I cannot use PointerPools here. They are inside src/Rtree.h
+//					RegionPtr mbr = m_regionPool.acquire();
+//					shape.getMBR(*mbr);
+					// Maybe I can use RegionPtr which is inside spatialindex/Region.h
+//					RegionPtr* mbrr;
+//					childShape->getMBR(**mbrr);
+
+					// Both above is not available..
+					Region* childMBR = dynamic_cast<Region*>(childShape);  // Rtree always hold MBR of the object
+
+					Data data = Data(0, childData,*childMBR, n->getChildIdentifier(cChild));
+
+					vis->visitData(data);
+
+					if(childData != nullptr) delete childData;
+					if(childShape != nullptr) delete childShape;
+				}
 			}
 		}
 
@@ -202,7 +237,7 @@ int main(int argc, char** argv)
 	{
 		if (argc != 5)
 		{
-			cerr << "Usage: " << argv[0] << " query_file tree_file cache_size query_type [intersection | 10NN | selfjoin]." << endl;
+			cerr << "Usage: " << argv[0] << " query_file tree_file cache_size query_type [intersection | 10NN | selfjoin | pointQuery]." << endl;
 			return -1;
 		}
 
@@ -211,7 +246,7 @@ int main(int argc, char** argv)
 		if (strcmp(argv[4], "intersection") == 0) queryType = 0;
 		else if (strcmp(argv[4], "10NN") == 0) queryType = 1;
 		else if (strcmp(argv[4], "selfjoin") == 0) queryType = 2;
-		else if (strcmp(argv[4], "pointLocation") == 0) queryType = 3;
+		else if (strcmp(argv[4], "pointquery") == 0) queryType = 3;  // Find objects that contains pointQuery
 		else
 		{
 			cerr << "Unknown query type." << endl;
@@ -283,9 +318,8 @@ int main(int argc, char** argv)
 				else
 				{
 					Point p = Point(plow, 2);
-					MypointLocationQueryStrategy pointquery(p);
+					MypointLocationQueryStrategy pointquery(p,vis);
 					tree->queryStrategy(pointquery);
-
 				}
 
 				indexIO += vis.m_indexIO;

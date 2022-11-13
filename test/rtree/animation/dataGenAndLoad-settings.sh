@@ -3,7 +3,7 @@
 
 # NOTE:(UK) This file generates 2 types of objetcs::
 #     --- data set and load it into R*tree and STR-tree and PLOT data set and Leaf MBRs.
-#     --- quey set with a specific AQAR values.
+#     --- query set with a specific AQAR values.For point query, set AQAR as 1.
 
 # Sample usage:
 #       ---  ./dataGenAndLoad-settings.sh -tdata  -d100 -lu -x0.04 -y0.04 -ef   -c5

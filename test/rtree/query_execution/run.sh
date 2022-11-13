@@ -3,10 +3,11 @@
 
 # NOTE:(UK) This file generates 2 types of objetcs::
 #     --- data set and load it into R*tree 
-#     --- query set with a specific AQAR values.
-#	  --- execute diffrent types of queries inersection|selfjoin|10NN
-# Sample usage:
-#		---  ./run.sh 100 u 0.04 0.04 f 5 1 u 0.08 0.08 1.4 selfjoin
+#     --- query set with a specific AQAR values. For point query, set AQAR as 1.
+#	  --- execute diffrent types of queries inersection|selfjoin|10NN|pointquery
+# Sample usage:        1  2  3    4   5 6 | 7  8   9     10    11   12
+#		---  ./run.sh 100 u 0.04 0.04 f 5   1  u  0.08   0.08   1.4  selfjoin
+#		---./run.sh 10000 u 0.04 0.04 f 92  10 u   0      0     1    pointquery
 
 # my source:
 export SCRIPT_PATH="$HOME/git/libspatialindex/test/rtree"  # Here, do not use "~/git/...". It does not work!

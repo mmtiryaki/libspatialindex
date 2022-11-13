@@ -34,7 +34,15 @@
 #define QUERY 2
 
 
-
+class Point{
+public:
+	double m_x, m_y;
+	Point (double x, double y)
+	{
+		m_x = x;
+		m_y = y;
+	}
+};
 class Region
 {
 public:
@@ -57,6 +65,16 @@ public:
 
 		return true;
 	}
+
+	bool contains(Point& p)
+		{
+			if (
+				m_xmin > p.m_x || m_xmax < p.m_x ||
+				m_ymin > p.m_y || m_ymax < p.m_y)
+				return false;
+
+			return true;
+		}
 
 	double getMinDist(const Region& r)
 	{
@@ -98,6 +116,7 @@ int main(int argc, char** argv)
 	if (strcmp(argv[2], "intersection") == 0) queryType = 0;
 	else if (strcmp(argv[2], "10NN") == 0) queryType = 1;
 	else if (strcmp(argv[2], "selfjoin") == 0) queryType = 2;
+	else if (strcmp(argv[2], "pointquery") == 0) queryType = 3;  // Find objects that contains pointQuery
 	else
 	{
 		std::cerr << "Unknown query type." << std::endl;
@@ -132,7 +151,7 @@ int main(int argc, char** argv)
 		}
 		else if (op == QUERY)
 		{
-			//query
+			//query intersection
 			if (queryType == 0)
 			{
 				Region query = Region(x1, y1, x2, y2);
@@ -141,6 +160,7 @@ int main(int argc, char** argv)
 					if (query.intersects((*it).second)) std::cout << (*it).first << std::endl;
 				}
 			}
+			// 10NN
 			else if (queryType == 1)
 			{
 				Region query = Region(x1, y1, x1, y1);
@@ -175,7 +195,8 @@ int main(int argc, char** argv)
 					delete e;
 				}
 			}
-			else
+			// selfjoin
+			else if (queryType == 2)
 			{
 				Region query = Region(x1, y1, x2, y2);
 
@@ -193,6 +214,18 @@ int main(int argc, char** argv)
 								std::cout << (*it1).first << " " << (*it2).first << std::endl;
 							}
 						}
+					}
+				}
+			}
+			// point query
+			else
+			{
+				Point query = Point(x1, y1);
+
+				for (std::multimap<size_t, Region>::iterator it1 = data.begin();
+						it1 != data.end(); it1++) {
+					if (((*it1).second).contains(query)) {
+						std::cout << (*it1).first << std::endl;
 					}
 				}
 			}

@@ -110,7 +110,8 @@ int main(int argc, char** argv)
 		if (strcmp(argv[6], "intersection") == 0) queryType = 0;
 		else if (strcmp(argv[6], "10NN") == 0) queryType = 1;
 		else if (strcmp(argv[6], "selfjoin") == 0) queryType = 2;
-		else if (strcmp(argv[6], "contains") == 0) queryType = 3;
+		else if (strcmp(argv[6], "pointquery") == 0) queryType = 3;
+		else if (strcmp(argv[6], "contains") == 0) queryType = 4;
 		else
 		{
 			std::cerr << "Unknown query type." << std::endl;
@@ -217,6 +218,11 @@ int main(int argc, char** argv)
 				{
 					Region r = Region(plow, phigh, 2);
 					tree->selfJoinQuery(r, vis);
+				}
+				else if(queryType == 3)  // point query
+				{
+					Region r = Region(plow, plow, 2);
+					tree->intersectsWithQuery(r, vis);
 				}
 				else
 				{
