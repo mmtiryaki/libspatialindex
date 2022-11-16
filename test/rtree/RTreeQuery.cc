@@ -246,7 +246,10 @@ int main(int argc, char** argv)
 		if (strcmp(argv[4], "intersection") == 0) queryType = 0;
 		else if (strcmp(argv[4], "10NN") == 0) queryType = 1;
 		else if (strcmp(argv[4], "selfjoin") == 0) queryType = 2;
-		else if (strcmp(argv[4], "pointquery") == 0) queryType = 3;  // Find objects that contains pointQuery
+		else if (strcmp(argv[4], "pointquery") == 0) queryType = 3;  // Find objects that contains point Query
+		else if (strcmp(argv[4], "internalNodesquery") == 0) queryType = 4;
+		else if (strcmp(argv[4], "containsWhat") == 0) queryType = 5;  // Find objects that contains region query
+//		else if (strcmp(argv[4], "joinQuery") == 0) queryType = 6;
 		else
 		{
 			cerr << "Unknown query type." << endl;
@@ -301,25 +304,37 @@ int main(int argc, char** argv)
 				if (queryType == 0)
 				{
 					Region r = Region(plow, phigh, 2);
-					tree->intersectsWithQuery(r, vis);
-						// this will find all data that intersect with the query range.
+					tree->intersectsWithQuery(r, vis); 	// this will find all data that "intersects" with the query range. RangeQueryType in RTreee is set as "IntersectionQuery" by default.
 				}
 				else if (queryType == 1)
 				{
 					Point p = Point(plow, 2);
-					tree->nearestNeighborQuery(10, p, vis);
-						// this will find the 10 nearest neighbors.
+					tree->nearestNeighborQuery(10, p, vis); // this will find the 10 nearest neighbors.
 				}
 				else if (queryType == 2)
 				{
 					Region r = Region(plow, phigh, 2);
 					tree->selfJoinQuery(r, vis);
 				}
-				else
+				else if (queryType == 3)
 				{
 					Point p = Point(plow, 2);
-					MypointLocationQueryStrategy pointquery(p,vis);
-					tree->queryStrategy(pointquery);
+					MypointLocationQueryStrategy pointquery_strat(p,vis);
+					tree->queryStrategy(pointquery_strat);
+				}
+				else if (queryType == 4)
+				{
+					Region r = Region(plow, phigh, 2);
+					tree->internalNodesQuery(r,vis);
+					// Retrieve internal nodes AND leaf nodes (ids) that is contained by query.
+					// Selected Internal nodes are displayed 1 time, leaf node ids are displayed as number of times that shows the number of their children contained by the query.
+					// Where to use ?
+					// Has lockguard ? Why?
+				}
+				else //if (queryType == 5)
+				{
+					Region r = Region(plow, phigh, 2);
+					tree->containsWhatQuery(r, vis); // this will find all data that is "contained" by the query range. Identical with intersection if RangeQueryType is set to ContainmentQuery.
 				}
 
 				indexIO += vis.m_indexIO;
